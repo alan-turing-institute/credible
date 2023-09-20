@@ -39,6 +39,7 @@ class ScanEventCredentialOffer extends ScanEvent {
 }
 
 class ScanEventVerifiablePresentationRequest extends ScanEvent {
+  final bool selectiveDisclosure;
   final String url;
   final String key;
   final List<CredentialModel> credentials;
@@ -46,6 +47,7 @@ class ScanEventVerifiablePresentationRequest extends ScanEvent {
   final String? domain;
 
   ScanEventVerifiablePresentationRequest({
+    required this.selectiveDisclosure,
     required this.url,
     required this.key,
     required this.credentials,
@@ -253,6 +255,7 @@ class ScanBloc extends Bloc<ScanEvent, ScanState> {
     final log = Logger('credible/scan/verifiable-presentation-request');
     yield ScanStateWorking();
 
+    final selectiveDisclosure = event.selectiveDisclosure;
     final url = event.url;
     final keyId = event.key;
     final challenge = event.challenge;
@@ -296,7 +299,7 @@ class ScanBloc extends Bloc<ScanEvent, ScanState> {
       final ffiConfig = await ffi_config_instance.get_ffi_config();
       try {
         final presentation = await trustchain_ffi.vpIssuePresentation(
-            presentation: pres, opts: jsonEncode(ffiConfig), jwkJson: key);
+            presentation: pres, idxs: jsonEncode([1,2,3]) opts: jsonEncode(ffiConfig), jwkJson: key);
         final presentation_json = jsonEncode({
           'presentationOrCredential': {
             'presentation': jsonDecode(presentation)

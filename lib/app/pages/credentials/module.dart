@@ -73,17 +73,32 @@ class CredentialsModule extends Module {
               onSubmit: (preview) {
                 Modular.to.pushReplacementNamed(
                   '/credentials/pick',
-                  arguments: (selection) {
-                    Modular.get<ScanBloc>().add(
-                      ScanEventVerifiablePresentationRequest(
-                        url: args.data.toString(),
-                        key: 'key',
-                        credentials: selection,
-                        challenge: preview['challenge'],
-                        domain: preview['domain'],
-                      ),
-                    );
-                  },
+                  arguments: {
+                    'present': (selection) {
+                      Modular.get<ScanBloc>().add(
+                        ScanEventVerifiablePresentationRequest(
+                          selectiveDisclosure: false,
+                          url: args.data.toString(),
+                          key: 'key',
+                          credentials: selection,
+                          challenge: preview['challenge'],
+                          domain: preview['domain'],
+                        ),
+                      );
+                    },
+                    'presentSelectiveDisclosure': (selection) {
+                      Modular.get<ScanBloc>().add(
+                        ScanEventVerifiablePresentationRequest(
+                          selectiveDisclosure: true,
+                          url: args.data.toString(),
+                          key: 'key',
+                          credentials: selection,
+                          challenge: preview['challenge'],
+                          domain: preview['domain'],
+                        ),
+                      );
+                    },
+                  }
                 );
               },
             );
@@ -150,7 +165,8 @@ class CredentialsModule extends Module {
           child: (context, args) => CredentialsStream(
             child: (context, items) => CredentialsPickPage(
               items: items,
-              onSubmit: args.data,
+              onSubmit: args.data['present'],
+              onSubmitSD: args.data['presentSelectiveDisclosure'],
             ),
           ),
           transition: TransitionType.rightToLeftWithFade,
