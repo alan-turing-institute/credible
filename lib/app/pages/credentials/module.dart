@@ -77,7 +77,7 @@ class CredentialsModule extends Module {
                     'present': (selection) {
                       Modular.get<ScanBloc>().add(
                         ScanEventVerifiablePresentationRequest(
-                          selectiveDisclosure: false,
+                          selectiveDisclosure: null,
                           url: args.data.toString(),
                           key: 'key',
                           credentials: selection,
@@ -89,7 +89,7 @@ class CredentialsModule extends Module {
                     'presentSelectiveDisclosure': (selection) {
                       Modular.get<ScanBloc>().add(
                         ScanEventVerifiablePresentationRequest(
-                          selectiveDisclosure: true,
+                          selectiveDisclosure: [1,2,3],
                           url: args.data.toString(),
                           key: 'key',
                           credentials: selection,

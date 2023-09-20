@@ -39,7 +39,7 @@ class ScanEventCredentialOffer extends ScanEvent {
 }
 
 class ScanEventVerifiablePresentationRequest extends ScanEvent {
-  final bool selectiveDisclosure;
+  final List<int>? selectiveDisclosure;
   final String url;
   final String key;
   final List<CredentialModel> credentials;
@@ -299,7 +299,7 @@ class ScanBloc extends Bloc<ScanEvent, ScanState> {
       final ffiConfig = await ffi_config_instance.get_ffi_config();
       try {
         final presentation = await trustchain_ffi.vpIssuePresentation(
-            presentation: pres, idxs: jsonEncode([1,2,3]) opts: jsonEncode(ffiConfig), jwkJson: key);
+            presentation: pres, idxs: jsonEncode([1,2,3]), opts: jsonEncode(ffiConfig), jwkJson: key);
         final presentation_json = jsonEncode({
           'presentationOrCredential': {
             'presentation': jsonDecode(presentation)

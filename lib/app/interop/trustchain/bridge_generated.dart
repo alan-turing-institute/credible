@@ -36,6 +36,7 @@ abstract class TrustchainFfi {
   /// Issues a verifiable presentation. Analogous with [didkit](https://docs.rs/didkit/latest/didkit/c/fn.didkit_vc_issue_presentation.html).
   Future<String> vpIssuePresentation(
       {required String presentation,
+      String? idxs,
       required String opts,
       required String jwkJson,
       dynamic hint});
@@ -128,18 +129,20 @@ class TrustchainFfiImpl implements TrustchainFfi {
 
   Future<String> vpIssuePresentation(
       {required String presentation,
+      String? idxs,
       required String opts,
       required String jwkJson,
       dynamic hint}) {
     var arg0 = _platform.api2wire_String(presentation);
-    var arg1 = _platform.api2wire_String(opts);
-    var arg2 = _platform.api2wire_String(jwkJson);
+    var arg1 = _platform.api2wire_opt_String(idxs);
+    var arg2 = _platform.api2wire_String(opts);
+    var arg3 = _platform.api2wire_String(jwkJson);
     return _platform.executeNormal(FlutterRustBridgeTask(
-      callFfi: (port_) =>
-          _platform.inner.wire_vp_issue_presentation(port_, arg0, arg1, arg2),
+      callFfi: (port_) => _platform.inner
+          .wire_vp_issue_presentation(port_, arg0, arg1, arg2, arg3),
       parseSuccessData: _wire2api_String,
       constMeta: kVpIssuePresentationConstMeta,
-      argValues: [presentation, opts, jwkJson],
+      argValues: [presentation, idxs, opts, jwkJson],
       hint: hint,
     ));
   }
@@ -147,7 +150,7 @@ class TrustchainFfiImpl implements TrustchainFfi {
   FlutterRustBridgeTaskConstMeta get kVpIssuePresentationConstMeta =>
       const FlutterRustBridgeTaskConstMeta(
         debugName: "vp_issue_presentation",
-        argNames: ["presentation", "opts", "jwkJson"],
+        argNames: ["presentation", "idxs", "opts", "jwkJson"],
       );
 
   void dispose() {
@@ -186,6 +189,11 @@ class TrustchainFfiPlatform extends FlutterRustBridgeBase<TrustchainFfiWire> {
   @protected
   ffi.Pointer<wire_uint_8_list> api2wire_String(String raw) {
     return api2wire_uint_8_list(utf8.encoder.convert(raw));
+  }
+
+  @protected
+  ffi.Pointer<wire_uint_8_list> api2wire_opt_String(String? raw) {
+    return raw == null ? ffi.nullptr : api2wire_String(raw);
   }
 
   @protected
@@ -370,12 +378,14 @@ class TrustchainFfiWire implements FlutterRustBridgeWireBase {
   void wire_vp_issue_presentation(
     int port_,
     ffi.Pointer<wire_uint_8_list> presentation,
+    ffi.Pointer<wire_uint_8_list> idxs,
     ffi.Pointer<wire_uint_8_list> opts,
     ffi.Pointer<wire_uint_8_list> jwk_json,
   ) {
     return _wire_vp_issue_presentation(
       port_,
       presentation,
+      idxs,
       opts,
       jwk_json,
     );
@@ -387,11 +397,16 @@ class TrustchainFfiWire implements FlutterRustBridgeWireBase {
               ffi.Int64,
               ffi.Pointer<wire_uint_8_list>,
               ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>,
               ffi.Pointer<wire_uint_8_list>)>>('wire_vp_issue_presentation');
   late final _wire_vp_issue_presentation =
       _wire_vp_issue_presentationPtr.asFunction<
-          void Function(int, ffi.Pointer<wire_uint_8_list>,
-              ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
+          void Function(
+              int,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>)>();
 
   ffi.Pointer<wire_uint_8_list> new_uint_8_list_0(
     int len,
