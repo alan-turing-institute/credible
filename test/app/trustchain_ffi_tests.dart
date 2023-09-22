@@ -93,12 +93,24 @@ void main() {
         'holder': did,
         'verifiableCredential': jsonDecode(vcStr)
       };
+      print(trustchain_ffi.flattenCredential(credential: vcStr));
       final ffiConfig = Constants.ffiConfig;
       print(await trustchain_ffi.vpIssuePresentation(
           idxs: jsonEncode([5]),
           presentation: jsonEncode(pres),
           opts: jsonEncode(ffiConfig),
           jwkJson: key));
+    });
+
+    test('Flatten credential', () async {
+      final did = 'did:key:z6MkhG98a8j2d3jqia13vrWqzHwHAgKTv9NjYEgdV3ndbEdD';
+      final url = Uri.http(
+          '10.0.2.2:8081', '/vc_rss/issuer/481935de-f93d-11ed-a309-d7ec1d02e89c');
+      final credential = await http.post(url,
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({'subject_id': did}));
+      final vcStr = credential.body;
+      print(await trustchain_ffi.flattenCredential(credential: vcStr));
     });
   });
 }

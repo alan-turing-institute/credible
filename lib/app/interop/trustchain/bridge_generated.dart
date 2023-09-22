@@ -33,6 +33,10 @@ abstract class TrustchainFfi {
 
   FlutterRustBridgeTaskConstMeta get kVcVerifyCredentialConstMeta;
 
+  String flattenCredential({required String credential, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kFlattenCredentialConstMeta;
+
   /// Issues a verifiable presentation. Analogous with [didkit](https://docs.rs/didkit/latest/didkit/c/fn.didkit_vc_issue_presentation.html).
   Future<String> vpIssuePresentation(
       {required String presentation,
@@ -125,6 +129,23 @@ class TrustchainFfiImpl implements TrustchainFfi {
       const FlutterRustBridgeTaskConstMeta(
         debugName: "vc_verify_credential",
         argNames: ["credential", "opts"],
+      );
+
+  String flattenCredential({required String credential, dynamic hint}) {
+    var arg0 = _platform.api2wire_String(credential);
+    return _platform.executeSync(FlutterRustBridgeSyncTask(
+      callFfi: () => _platform.inner.wire_flatten_credential(arg0),
+      parseSuccessData: _wire2api_String,
+      constMeta: kFlattenCredentialConstMeta,
+      argValues: [credential],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kFlattenCredentialConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "flatten_credential",
+        argNames: ["credential"],
       );
 
   Future<String> vpIssuePresentation(
@@ -374,6 +395,21 @@ class TrustchainFfiWire implements FlutterRustBridgeWireBase {
       _wire_vc_verify_credentialPtr.asFunction<
           void Function(int, ffi.Pointer<wire_uint_8_list>,
               ffi.Pointer<wire_uint_8_list>)>();
+
+  WireSyncReturn wire_flatten_credential(
+    ffi.Pointer<wire_uint_8_list> credential,
+  ) {
+    return _wire_flatten_credential(
+      credential,
+    );
+  }
+
+  late final _wire_flatten_credentialPtr = _lookup<
+      ffi.NativeFunction<
+          WireSyncReturn Function(
+              ffi.Pointer<wire_uint_8_list>)>>('wire_flatten_credential');
+  late final _wire_flatten_credential = _wire_flatten_credentialPtr
+      .asFunction<WireSyncReturn Function(ffi.Pointer<wire_uint_8_list>)>();
 
   void wire_vp_issue_presentation(
     int port_,

@@ -11,7 +11,7 @@ class CredentialsPickPage extends StatefulWidget {
   final List<CredentialModel> items;
   final void Function(List<CredentialModel>) onSubmit;
   // onSubmit with selective disclosure
-  final void Function(List<CredentialModel>) onSubmitSD;
+  final void Function(CredentialModel) onSubmitSD;
 
   const CredentialsPickPage({
     Key? key,
@@ -96,8 +96,7 @@ class _CredentialsPickPageState extends State<CredentialsPickPage> {
                       ));
                     } else {
                       widget
-                          .onSubmitSD(selection.map((i) => widget.items[i]).toList());
-                      Modular.to.pushReplacementNamed('/credentials/list');
+                          .onSubmitSD(widget.items[selection.first]);
                     }
                   },
                   child: Text('Present with selective disclosure'),

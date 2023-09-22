@@ -108,6 +108,7 @@
   "credentialPresentCancel": "Reject",
   "credentialPickPresent": "Present",
   "credentialPickSelect": "Choose one or more credentials from your wallet to present, or select a *single* credential from which to selectivly disclose a subset of the fields.",
+  "credentialPickFieldsSelect": "Select one or more fields from your credential to disclose.",
   "credentialReceiveTitle": "Credential Offer",
   "credentialReceiveHost": "wants to send you a credential",
   "credentialReceiveConfirm": "Add to wallet",

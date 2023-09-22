@@ -8,6 +8,7 @@ import 'package:credible/app/pages/credentials/receive.dart';
 import 'package:credible/app/pages/credentials/stream.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:credible/app/pages/credentials/pick_fields.dart';
 
 class CredentialsModule extends Module {
   @override
@@ -87,15 +88,23 @@ class CredentialsModule extends Module {
                       );
                     },
                     'presentSelectiveDisclosure': (selection) {
-                      Modular.get<ScanBloc>().add(
-                        ScanEventVerifiablePresentationRequest(
-                          selectiveDisclosure: [1,2,3],
-                          url: args.data.toString(),
-                          key: 'key',
-                          credentials: selection,
-                          challenge: preview['challenge'],
-                          domain: preview['domain'],
-                        ),
+                      Modular.to.pushReplacementNamed(
+                        '/credentials/pick_fields',
+                        arguments: {
+                          'selected_vc': selection,
+                          'onSubmit': (idxs) {
+                            Modular.get<ScanBloc>().add(
+                              ScanEventVerifiablePresentationRequest(
+                                selectiveDisclosure: idxs,
+                                url: args.data.toString(),
+                                key: 'key',
+                                credentials: [selection],
+                                challenge: preview['challenge'],
+                                domain: preview['domain'],
+                              ),
+                            );
+                          }
+                        }
                       );
                     },
                   }
@@ -170,6 +179,13 @@ class CredentialsModule extends Module {
             ),
           ),
           transition: TransitionType.rightToLeftWithFade,
+        ),
+        ChildRoute(
+          '/pick_fields',
+          child: (context, args) => CredentialsPickFieldsPage(
+              item: args.data['selected_vc'],
+              onSubmit: args.data['onSubmit'],
+            ),
         ),
       ];
 }

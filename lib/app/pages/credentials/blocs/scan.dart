@@ -255,7 +255,7 @@ class ScanBloc extends Bloc<ScanEvent, ScanState> {
     final log = Logger('credible/scan/verifiable-presentation-request');
     yield ScanStateWorking();
 
-    final selectiveDisclosure = event.selectiveDisclosure;
+    var selectiveDisclosure = event.selectiveDisclosure;
     final url = event.url;
     final keyId = event.key;
     final challenge = event.challenge;
@@ -298,8 +298,17 @@ class ScanBloc extends Bloc<ScanEvent, ScanState> {
       // Issue presentation with Trustchain FFI
       final ffiConfig = await ffi_config_instance.get_ffi_config();
       try {
-        final presentation = await trustchain_ffi.vpIssuePresentation(
-            presentation: pres, idxs: jsonEncode([1,2,3]), opts: jsonEncode(ffiConfig), jwkJson: key);
+        String presentation;
+        if (selectiveDisclosure == null) {
+          presentation = await trustchain_ffi.vpIssuePresentation(
+            presentation: pres, idxs: null, opts: jsonEncode(ffiConfig), jwkJson: key);
+        } else {
+          // map idxs to be 1 indexed ("math-indexed" according to RSS requirements)
+          selectiveDisclosure = selectiveDisclosure.map((i) => i + 1).toList();
+          print(selectiveDisclosure);
+          presentation = await trustchain_ffi.vpIssuePresentation(
+            presentation: pres, idxs: jsonEncode(selectiveDisclosure), opts: jsonEncode(ffiConfig), jwkJson: key);
+        }
         final presentation_json = jsonEncode({
           'presentationOrCredential': {
             'presentation': jsonDecode(presentation)
@@ -312,6 +321,8 @@ class ScanBloc extends Bloc<ScanEvent, ScanState> {
         await client.post(url.toString(), data: presentation_json);
       } on FfiException catch (err) {
         log.severe(err);
+      } catch (err) {
+        print(err);
       }
 
       // TODO: remove once VP implementation complete
