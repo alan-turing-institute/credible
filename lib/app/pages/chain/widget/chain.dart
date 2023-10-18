@@ -1,12 +1,7 @@
-import 'package:credible/app/interop/secure_storage/secure_storage.dart';
 import 'package:credible/app/pages/chain/models/chain.dart';
 import 'package:credible/app/pages/chain/widget/tile.dart';
 import 'package:credible/app/pages/did/widget/document.dart';
-import 'package:credible/app/pages/profile/blocs/config.dart';
-import 'package:credible/app/pages/profile/models/config.dart';
-import 'package:credible/app/pages/profile/models/root.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:intl/intl.dart';
 
 class DIDChainWidgetModel {
