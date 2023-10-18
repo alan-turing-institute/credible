@@ -133,82 +133,88 @@ class _CredentialsDetailState
           color: UiKit.palette.icon,
         ),
       ),
-      navigation: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          SafeArea(
-            child: Container(
-              padding: const EdgeInsets.symmetric(),
-              height: kBottomNavigationBarHeight * 1.25,
-              width: 120,
-              child: GestureDetector(
-                onTap: () => Modular.to.pushNamed(
-                  '/did/display',
-                  arguments: [
-                    widget.item.data['issuer'],
-                  ],
-                ),
-                child: Tooltip(
-                  message: localizations.credentialDetailShowDidTooltip,
-                  child: Text(
-                    localizations.credentialDetailShowDid,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).primaryColor),
-                    textAlign: TextAlign.center,
+      navigation: Container(
+        color: UiKit.palette.navBarBackground,
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              SafeArea(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(),
+                  // height: kBottomNavigationBarHeight,
+                  width: 120,
+                  child: GestureDetector(
+                    onTap: () => Modular.to.pushNamed(
+                      '/did/display',
+                      arguments: [
+                        widget.item.data['issuer'],
+                      ],
+                    ),
+                    child: Tooltip(
+                      message: localizations.credentialDetailShowDidTooltip,
+                      child: Text(
+                        localizations.credentialDetailShowDid,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).primaryColor),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-          SafeArea(
-            child: Container(
-              padding: const EdgeInsets.symmetric(),
-              height: kBottomNavigationBarHeight * 1.25,
-              width: 120,
-              child: GestureDetector(
-                onTap: () => Modular.to.pushNamed(
-                  '/did/chain',
-                  arguments: [
-                    widget.item.data['issuer'],
-                  ],
-                ),
-                child: Tooltip(
-                  message: localizations.credentialDetailShowChainTooltip,
-                  child: Text(
-                    localizations.credentialDetailShowChain,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).primaryColor),
-                    textAlign: TextAlign.center,
+              SafeArea(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(),
+                  // height: kBottomNavigationBarHeight,
+                  width: 120,
+                  child: GestureDetector(
+                    onTap: () => Modular.to.pushNamed(
+                      '/did/chain',
+                      arguments: [
+                        widget.item.data['issuer'],
+                      ],
+                    ),
+                    child: Tooltip(
+                      message: localizations.credentialDetailShowChainTooltip,
+                      child: Text(
+                        localizations.credentialDetailShowChain,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).primaryColor),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-          SafeArea(
-            child: Container(
-              height: kBottomNavigationBarHeight * 1.25,
-              width: 130,
-              child: GestureDetector(
-                onTap: () => Modular.to.pushNamed(
-                  '/qr-code/display',
-                  arguments: [widget.item.id, widget.item.id],
-                ),
-                child: Tooltip(
-                  message: localizations.credentialDetailShareTooltip,
-                  child: Text(
-                    localizations.credentialDetailShare,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).primaryColor),
-                    textAlign: TextAlign.center,
+              SafeArea(
+                child: Container(
+                  // height: kBottomNavigationBarHeight,
+                  width: 130,
+                  child: GestureDetector(
+                    onTap: () => Modular.to.pushNamed(
+                      '/qr-code/display',
+                      arguments: [widget.item.id, widget.item.id],
+                    ),
+                    child: Tooltip(
+                      message: localizations.credentialDetailShareTooltip,
+                      child: Text(
+                        localizations.credentialDetailShare,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).primaryColor),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
