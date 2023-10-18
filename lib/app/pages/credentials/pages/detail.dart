@@ -141,18 +141,17 @@ class _CredentialsDetailState
               padding: const EdgeInsets.symmetric(),
               height: kBottomNavigationBarHeight * 1.25,
               width: 120,
-              child: Tooltip(
-                message: localizations.credentialDetailShare,
-                child: GestureDetector(
-                  onTap: () => Modular.to.pushNamed(
-                    '/did/display',
-                    arguments: [
-                      widget.item.data['issuer'],
-                    ],
-                  ),
+              child: GestureDetector(
+                onTap: () => Modular.to.pushNamed(
+                  '/did/display',
+                  arguments: [
+                    widget.item.data['issuer'],
+                  ],
+                ),
+                child: Tooltip(
+                  message: localizations.credentialDetailShowDidTooltip,
                   child: Text(
-                    'Show\nDID',
-                    // style: Theme.of(context).textTheme.overline!,
+                    localizations.credentialDetailShowDid,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).primaryColor),
@@ -167,18 +166,17 @@ class _CredentialsDetailState
               padding: const EdgeInsets.symmetric(),
               height: kBottomNavigationBarHeight * 1.25,
               width: 120,
-              child: Tooltip(
-                message: localizations.credentialDetailShare,
-                child: GestureDetector(
-                  onTap: () => Modular.to.pushNamed(
-                    '/did/chain',
-                    arguments: [
-                      widget.item.data['issuer'],
-                    ],
-                  ),
+              child: GestureDetector(
+                onTap: () => Modular.to.pushNamed(
+                  '/did/chain',
+                  arguments: [
+                    widget.item.data['issuer'],
+                  ],
+                ),
+                child: Tooltip(
+                  message: localizations.credentialDetailShowChainTooltip,
                   child: Text(
-                    'Show\nChain',
-                    // style: Theme.of(context).textTheme.overline!,
+                    localizations.credentialDetailShowChain,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).primaryColor),
@@ -192,16 +190,15 @@ class _CredentialsDetailState
             child: Container(
               height: kBottomNavigationBarHeight * 1.25,
               width: 130,
-              child: Tooltip(
-                message: localizations.credentialDetailShare,
-                child: GestureDetector(
-                  onTap: () => Modular.to.pushNamed(
-                    '/qr-code/display',
-                    arguments: [widget.item.id, widget.item.id],
-                  ),
+              child: GestureDetector(
+                onTap: () => Modular.to.pushNamed(
+                  '/qr-code/display',
+                  arguments: [widget.item.id, widget.item.id],
+                ),
+                child: Tooltip(
+                  message: localizations.credentialDetailShareTooltip,
                   child: Text(
-                    'Share\nQR code',
-                    // style: Theme.of(context).textTheme.overline!,
+                    localizations.credentialDetailShare,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).primaryColor),
