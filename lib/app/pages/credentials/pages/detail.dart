@@ -139,29 +139,24 @@ class _CredentialsDetailState
           SafeArea(
             child: Container(
               padding: const EdgeInsets.symmetric(),
-              height: kBottomNavigationBarHeight * 1.75,
+              height: kBottomNavigationBarHeight * 1.25,
               width: 120,
               child: Tooltip(
                 message: localizations.credentialDetailShare,
-                child: BaseButton.primary(
-                  onPressed: () {
-                    Modular.to.pushNamed(
-                      '/did/display',
-                      arguments: [
-                        widget.item.data['issuer'],
-                      ],
-                    );
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        'Show\nDID',
-                        textAlign: TextAlign.center,
-                      ),
+                child: GestureDetector(
+                  onTap: () => Modular.to.pushNamed(
+                    '/did/display',
+                    arguments: [
+                      widget.item.data['issuer'],
                     ],
+                  ),
+                  child: Text(
+                    'Show\nDID',
+                    // style: Theme.of(context).textTheme.overline!,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).primaryColor),
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
@@ -170,29 +165,24 @@ class _CredentialsDetailState
           SafeArea(
             child: Container(
               padding: const EdgeInsets.symmetric(),
-              height: kBottomNavigationBarHeight * 1.75,
+              height: kBottomNavigationBarHeight * 1.25,
               width: 120,
               child: Tooltip(
                 message: localizations.credentialDetailShare,
-                child: BaseButton.primary(
-                  onPressed: () {
-                    Modular.to.pushNamed(
-                      '/did/chain',
-                      arguments: [
-                        widget.item.data['issuer'],
-                      ],
-                    );
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        'Show\nChain',
-                        textAlign: TextAlign.center,
-                      ),
+                child: GestureDetector(
+                  onTap: () => Modular.to.pushNamed(
+                    '/did/chain',
+                    arguments: [
+                      widget.item.data['issuer'],
                     ],
+                  ),
+                  child: Text(
+                    'Show\nChain',
+                    // style: Theme.of(context).textTheme.overline!,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).primaryColor),
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
@@ -200,39 +190,22 @@ class _CredentialsDetailState
           ),
           SafeArea(
             child: Container(
-              height: kBottomNavigationBarHeight * 1.75,
+              height: kBottomNavigationBarHeight * 1.25,
               width: 130,
               child: Tooltip(
                 message: localizations.credentialDetailShare,
-                child: BaseButton.primary(
-                  onPressed: () {
-                    Modular.to.pushNamed(
-                      '/qr-code/display',
-                      arguments: [
-                        widget.item.id,
-                        widget.item.id,
-                      ],
-                    );
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    // TODO: try expanding icon into text when enough space available
-                    // e.g. moving into landscape, or a wide screen
-                    children: <Widget>[
-                      // TODO: for testing just have text
-                      // SvgPicture.asset(
-                      //   'assets/icon/qr-code.svg',
-                      //   width: 24.0,
-                      //   height: 24.0,
-                      //   color: UiKit.palette.icon,
-                      // ),
-                      // const SizedBox(width: 16.0),
-                      // Text(localizations.credentialDetailShare),
-                      Text('Share\nQR code',
-                          softWrap: true, textAlign: TextAlign.center),
-                    ],
+                child: GestureDetector(
+                  onTap: () => Modular.to.pushNamed(
+                    '/qr-code/display',
+                    arguments: [widget.item.id, widget.item.id],
+                  ),
+                  child: Text(
+                    'Share\nQR code',
+                    // style: Theme.of(context).textTheme.overline!,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).primaryColor),
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
