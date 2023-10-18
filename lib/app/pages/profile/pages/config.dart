@@ -54,7 +54,7 @@ class _ConfigPageState extends State<ConfigPage> {
             blockHeight: int.parse(config_model.rootBlockHeight));
     rootConfigModel = RootConfigModel(
         date: config_model.rootEventDate.isEmpty
-            ? DateTime.now()
+            ? DateTime.now().subtract(const Duration(days: 1))
             : DateTime.parse(config_model.rootEventDate),
         confimationCode: config_model.confirmationCode,
         root: rootIdentifier,
@@ -219,6 +219,13 @@ class _ConfigPageState extends State<ConfigPage> {
   void handleRootEventDateButton() async {
     // If it is not already set, handle setting a new root event date.
     if (!_rootEventDateIsSet.value) {
+      // If the selected date is not in the past, show an Error.
+      if (!rootConfigModel.date
+          .isBefore(DateTime.now().subtract(const Duration(days: 1)))) {
+        showErrorDialog('Invalid date',
+            'The root event date must be in the past. Please try again.');
+        return;
+      }
       // Get the root DID candidates via an HTTP request.
       var rootCandidates;
       try {
