@@ -28,7 +28,6 @@ class ConfigPage extends StatefulWidget {
 
 class _ConfigPageState extends State<ConfigPage> {
   late TextEditingController did;
-  late TextEditingController ionEndpoint;
   late TextEditingController trustchainEndpoint;
   late RootConfigModel rootConfigModel;
   late TextEditingController confirmationCodeController;
@@ -41,7 +40,6 @@ class _ConfigPageState extends State<ConfigPage> {
     final config_model =
         config_state is ConfigStateDefault ? config_state.model : ConfigModel();
     did = TextEditingController(text: config_model.did);
-    ionEndpoint = TextEditingController(text: config_model.ionEndpoint);
     trustchainEndpoint =
         TextEditingController(text: config_model.trustchainEndpoint);
     // Initialise the root config model:
@@ -54,7 +52,7 @@ class _ConfigPageState extends State<ConfigPage> {
             blockHeight: int.parse(config_model.rootBlockHeight));
     rootConfigModel = RootConfigModel(
         date: config_model.rootEventDate.isEmpty
-            ? DateTime.now()
+            ? DateTime.now().subtract(const Duration(days: 1))
             : DateTime.parse(config_model.rootEventDate),
         confimationCode: config_model.confirmationCode,
         root: rootIdentifier,
@@ -76,7 +74,6 @@ class _ConfigPageState extends State<ConfigPage> {
           // TODO: save not working here
           Modular.get<ConfigBloc>().add(ConfigEventUpdate(ConfigModel(
             did: did.text,
-            ionEndpoint: ionEndpoint.text,
             trustchainEndpoint: trustchainEndpoint.text,
             rootEventDate: _rootEventDateIsSet.value
                 ? rootConfigModel.date.toString()
@@ -199,13 +196,6 @@ class _ConfigPageState extends State<ConfigPage> {
           ),
           const SizedBox(height: 16.0),
           BaseTextField(
-            label: localizations.ionEndpoint,
-            controller: ionEndpoint,
-            icon: Icons.http_sharp,
-            textCapitalization: TextCapitalization.words,
-          ),
-          const SizedBox(height: 16.0),
-          BaseTextField(
             label: localizations.trustchainEndpoint,
             controller: trustchainEndpoint,
             icon: Icons.http_sharp,
@@ -219,6 +209,13 @@ class _ConfigPageState extends State<ConfigPage> {
   void handleRootEventDateButton() async {
     // If it is not already set, handle setting a new root event date.
     if (!_rootEventDateIsSet.value) {
+      // If the selected date is not in the past, show an Error.
+      if (!rootConfigModel.date
+          .isBefore(DateTime.now().subtract(const Duration(days: 1)))) {
+        showErrorDialog('Invalid date',
+            'The root event date must be in the past. Please try again.');
+        return;
+      }
       // Get the root DID candidates via an HTTP request.
       var rootCandidates;
       try {
