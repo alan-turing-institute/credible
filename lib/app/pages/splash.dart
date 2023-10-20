@@ -82,9 +82,7 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   Widget build(BuildContext context) => BasePage(
-        backgroundGradient: LinearGradient(
-          colors: [Color(0xFFFFFFFF), Color(0xFFFFFFFF)],
-        ),
+        backgroundGradient: UiKit.palette.splashBackground,
         scrollView: false,
         body: Container(
           alignment: Alignment.center,
