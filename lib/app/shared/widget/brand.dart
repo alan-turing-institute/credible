@@ -13,8 +13,8 @@ class BrandMinimal extends StatelessWidget {
         HeroFix(
           tag: 'splash/icon-minimal',
           child: Container(
-            width: MediaQuery.of(context).size.width * 0.2,
-            height: MediaQuery.of(context).size.width * 0.2,
+            width: MediaQuery.of(context).size.width * 0.5,
+            height: MediaQuery.of(context).size.width * 0.8,
             child: SvgPicture.asset('assets/brand/logo-splash.svg'),
           ),
         ),
