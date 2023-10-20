@@ -65,7 +65,7 @@ class __BaseItemState extends State<_BaseItem>
           margin: const EdgeInsets.symmetric(vertical: 4.0),
           decoration: BaseBoxDecoration(
             color: UiKit.palette.credentialBackground,
-            shapeColor: UiKit.palette.credentialDetail.withOpacity(0.2),
+            shapeColor: UiKit.palette.credentialDetail.withOpacity(0.1),
             value: 1.0,
             anchors: <Alignment>[
               Alignment.bottomRight,
@@ -117,7 +117,7 @@ class _LabeledItem extends StatelessWidget {
             icon,
             width: 16.0,
             height: 16.0,
-            color: UiKit.text.colorTextBody1,
+            color: UiKit.palette.credentialText,
           ),
           const SizedBox(width: 8.0),
           Expanded(
@@ -126,7 +126,7 @@ class _LabeledItem extends StatelessWidget {
               text: value,
               tooltip: '$label $value',
               style: GoogleFonts.poppins(
-                color: UiKit.text.colorTextBody1,
+                color: UiKit.palette.credentialText,
                 fontSize: 12.0,
                 fontWeight: FontWeight.w500,
               ),
@@ -194,7 +194,7 @@ class CredentialsListItem extends StatelessWidget {
                     tag: 'credential/${item.id}/id',
                     text: item.alias ?? item.id,
                     style: GoogleFonts.poppins(
-                      color: UiKit.text.colorTextBody1,
+                      color: UiKit.palette.credentialText,
                       fontSize: 16.0,
                       fontWeight: FontWeight.w600,
                     ),
