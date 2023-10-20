@@ -1,5 +1,5 @@
-name: credible
-description: Credible Wallet
+name: trustchain_mobile
+description: TrustChain Mobile
 
 publish_to: 'none'
 
@@ -42,9 +42,7 @@ dependencies:
 
   ed25519_hd_key: ^2.2.0
   bip39:
-    git:
-      url: https://github.com/spruceid/dart-bip39
-      ref: fix/23/uniform-random
+    path: ../dart-bip39/tree/fix/23/uniform-random
 
   didkit:
     path: ../didkit/lib/flutter
