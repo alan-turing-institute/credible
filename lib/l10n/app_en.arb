@@ -99,7 +99,7 @@
   "credentialDetailShowChain": "Chain",
   "credentialDetailShowChainTooltip": "Show the DID chain",
   "credentialDetailShare": "Share",
-  "credentialDetailShareTooltip": "Share credential UUID as QR code",
+  "credentialDetailShareTooltip": "Share credential as QR code",
   "credentialDetailDelete": "Delete credential",
   "credentialDetailDeleteConfirmationDialog": "Do you really want to delete this credential?",
   "credentialDetailDeleteConfirmationDialogYes": "Yes",

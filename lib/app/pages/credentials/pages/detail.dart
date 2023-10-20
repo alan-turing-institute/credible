@@ -139,6 +139,7 @@ class _CredentialsDetailState
           padding: const EdgeInsets.all(20.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            // TODO: replace all Text buttons with icons.
             children: [
               SafeArea(
                 child: Container(
