@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 class CrediblePalette extends UiPalette {
   const CrediblePalette();
 
+  static const white = Color(0xffffffff);
+
   static const blue = Color(0xff3A83A3);
   static const text = Color(0xff324854);
 
@@ -38,11 +40,7 @@ class CrediblePalette extends UiPalette {
       );
 
   @override
-  Gradient get splashBackground => LinearGradient(
-        colors: [blue, gradientBlue],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      );
+  Gradient get splashBackground => LinearGradient(colors: [white, white]);
 
   @override
   Gradient get buttonBackground => LinearGradient(
