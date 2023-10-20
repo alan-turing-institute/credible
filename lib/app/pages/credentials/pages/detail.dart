@@ -169,7 +169,6 @@ class _CredentialsDetailState
               SafeArea(
                 child: Container(
                   padding: const EdgeInsets.symmetric(),
-                  // height: kBottomNavigationBarHeight,
                   width: 120,
                   child: GestureDetector(
                     onTap: () => Modular.to.pushNamed(
@@ -193,7 +192,6 @@ class _CredentialsDetailState
               ),
               SafeArea(
                 child: Container(
-                  // height: kBottomNavigationBarHeight,
                   width: 130,
                   child: GestureDetector(
                     onTap: () => Modular.to.pushNamed(
