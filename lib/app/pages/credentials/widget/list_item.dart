@@ -65,7 +65,7 @@ class __BaseItemState extends State<_BaseItem>
           margin: const EdgeInsets.symmetric(vertical: 4.0),
           decoration: BaseBoxDecoration(
             color: UiKit.palette.credentialBackground,
-            shapeColor: UiKit.palette.credentialDetail.withOpacity(0.1),
+            shapeColor: UiKit.palette.credentialDetail.withOpacity(0.05),
             value: 1.0,
             anchors: <Alignment>[
               Alignment.bottomRight,
@@ -159,31 +159,31 @@ class CredentialsListItem extends StatelessWidget {
         child: Row(
           children: <Widget>[
             Container(
-              padding: const EdgeInsets.all(16.0),
+              // padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16.0),
               ),
-              child: HeroFix(
-                tag: 'credential/${item.id}/icon',
-                child: selected == null
-                    ? SvgPicture.asset(
-                        'assets/brand/spruce-icon.svg',
-                        width: 24.0,
-                        height: 24.0,
-                        color: UiKit.palette.icon,
-                      )
-                    : selected!
-                        ? Icon(
-                            Icons.check_box,
-                            size: 24.0,
-                            color: UiKit.palette.icon,
-                          )
-                        : Icon(
-                            Icons.check_box_outline_blank,
-                            size: 24.0,
-                            color: UiKit.palette.icon,
-                          ),
-              ),
+              // child: HeroFix(
+              // tag: 'credential/${item.id}/icon',
+              // child: selected == null
+              //     ? SvgPicture.asset(
+              //         'assets/brand/spruce-icon.svg',
+              //         width: 24.0,
+              //         height: 24.0,
+              //         color: UiKit.palette.icon,
+              //       )
+              //     : selected!
+              //         ? Icon(
+              //             Icons.check_box,
+              //             size: 24.0,
+              //             color: UiKit.palette.icon,
+              //           )
+              //         : Icon(
+              //             Icons.check_box_outline_blank,
+              //             size: 24.0,
+              //             color: UiKit.palette.icon,
+              //           ),
+              // ),
             ),
             const SizedBox(width: 16.0),
             Expanded(
