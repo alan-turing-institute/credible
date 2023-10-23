@@ -16,7 +16,14 @@ class FFIConfig {
   }
 
   Future<String> get_did() async {
-    return (await SecureStorageProvider.instance.get(ConfigModel.didKey))!;
+    final didIonMethod =
+        await SecureStorageProvider.instance.get(ConfigModel.didIonMethodKey) ??
+            'false';
+    final didKey =
+        await SecureStorageProvider.instance.get(ConfigModel.didKeyKey) ?? '';
+    final didIon =
+        await SecureStorageProvider.instance.get(ConfigModel.didIonKey) ?? '';
+    return didIonMethod == 'false' ? didKey : didIon;
   }
 
   Future<Map<String, Map<dynamic, dynamic>>> get_ffi_config() async {

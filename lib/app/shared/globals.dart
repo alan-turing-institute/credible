@@ -1,5 +1,7 @@
+import 'package:credible/app/interop/secure_storage/secure_storage.dart';
 import 'package:credible/app/pages/chain/models/chain.dart';
 import 'package:credible/app/pages/did/models/did.dart';
+import 'package:credible/app/pages/profile/models/config.dart';
 import 'package:dio/dio.dart';
 
 import 'config.dart';

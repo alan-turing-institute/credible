@@ -27,11 +27,14 @@ class ConfigPage extends StatefulWidget {
 }
 
 class _ConfigPageState extends State<ConfigPage> {
+  // TODO: replace with toggle?
   late TextEditingController did;
   late TextEditingController trustchainEndpoint;
   late RootConfigModel rootConfigModel;
   late TextEditingController confirmationCodeController;
   final ValueNotifier<bool> _rootEventDateIsSet = ValueNotifier<bool>(false);
+  // TODO: link to toggle
+  final ValueNotifier<bool> _didIonMethod = ValueNotifier<bool>(false);
 
   @override
   void initState() {
@@ -39,7 +42,7 @@ class _ConfigPageState extends State<ConfigPage> {
     final config_state = Modular.get<ConfigBloc>().state;
     final config_model =
         config_state is ConfigStateDefault ? config_state.model : ConfigModel();
-    did = TextEditingController(text: config_model.did);
+    did = TextEditingController(text: config_model.did());
     trustchainEndpoint =
         TextEditingController(text: config_model.trustchainEndpoint);
     // Initialise the root config model:
@@ -73,7 +76,8 @@ class _ConfigPageState extends State<ConfigPage> {
         onTap: () {
           // TODO: save not working here
           Modular.get<ConfigBloc>().add(ConfigEventUpdate(ConfigModel(
-            did: did.text,
+            // TODO: add update to 'didIonMethod'
+            // did: did.text,
             trustchainEndpoint: trustchainEndpoint.text,
             rootEventDate: _rootEventDateIsSet.value
                 ? rootConfigModel.date.toString()
@@ -121,6 +125,7 @@ class _ConfigPageState extends State<ConfigPage> {
             ),
           ),
           const SizedBox(height: 16.0),
+          // TODO: replace wit toggle?
           BaseTextField(
             label: localizations.didLabel,
             controller: did,

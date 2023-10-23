@@ -41,7 +41,7 @@ class DIDBloc extends Bloc<DIDEvent, DIDState> {
 
       final key = (await SecureStorageProvider.instance.get('key'))!;
       final did =
-          (await SecureStorageProvider.instance.get(ConfigModel.didKey))!;
+          (await SecureStorageProvider.instance.get(ConfigModel.didKeyKey))!;
       yield DIDStateDefault(did);
     } catch (e) {
       log.severe('something went wrong', e);
