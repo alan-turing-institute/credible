@@ -53,6 +53,7 @@ class DegenPalette extends UiPalette {
       );
 
   @override
+  // Color get shadow => Color(0x0d000000);
   Color get shadow => Color(0x0d000000);
 
   @override
@@ -87,4 +88,12 @@ class DegenPalette extends UiPalette {
 
   @override
   Color get textFieldBorder => Color(0xff1E1693);
+
+  @override
+  // TODO: implement lineChain
+  Color get lineChain => throw UnimplementedError();
+
+  @override
+  // TODO: implement titleText
+  Color get titleText => throw UnimplementedError();
 }

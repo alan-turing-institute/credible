@@ -73,14 +73,14 @@ class ChainItemWidget extends StatelessWidget {
                     rootEventDate,
                     style: Theme.of(context)
                         .textTheme
-                        .caption!
+                        .bodySmall!
                         .apply(color: UiKit.palette.credentialText),
                   )),
                 Text(
                   humanReadableEndpoint(endpoint),
                   style: Theme.of(context)
                       .textTheme
-                      .caption!
+                      .bodySmall!
                       .apply(color: UiKit.palette.credentialText),
                   maxLines: null,
                   softWrap: true,
@@ -94,7 +94,8 @@ class ChainItemWidget extends StatelessWidget {
                 SizedBox(height: 12.0),
                 Container(
                     decoration: BaseBoxDecoration(
-                      color: Colors.white.withOpacity(0.8),
+                      color:
+                          UiKit.palette.textFieldBackground.withOpacity(0.75),
                       value: 0.0,
                       shapeSize: 256.0,
                       anchors: <Alignment>[

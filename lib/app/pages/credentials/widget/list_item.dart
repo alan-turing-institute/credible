@@ -65,7 +65,7 @@ class __BaseItemState extends State<_BaseItem>
           margin: const EdgeInsets.symmetric(vertical: 4.0),
           decoration: BaseBoxDecoration(
             color: UiKit.palette.credentialBackground,
-            shapeColor: UiKit.palette.credentialDetail.withOpacity(0.05),
+            shapeColor: UiKit.palette.credentialDetail.withOpacity(0.5),
             value: 1.0,
             anchors: <Alignment>[
               Alignment.bottomRight,
