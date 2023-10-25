@@ -32,7 +32,6 @@ class Ui {
     this.text = const DegenText(),
   });
 
-  // ignore: unused_element
   const Ui._trustchain({
     this.palette = const TrustchainPalette(),
     this.constraints = const TrustchainConstraints(),

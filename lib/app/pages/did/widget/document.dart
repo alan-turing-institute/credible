@@ -35,10 +35,7 @@ class DIDDocumentWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         decoration: BaseBoxDecoration(
-          // TODO: update with different palette for DIDs
           color: UiKit.palette.credentialBackground,
-          // shapeColor: UiKit.palette.credentialDetail.withOpacity(0.2),
-          // color: color,
           value: 0.0,
           shapeSize: 256.0,
           anchors: <Alignment>[
@@ -76,7 +73,6 @@ class HumanFriendlyDIDDocumentWidget extends StatelessWidget {
 
   const HumanFriendlyDIDDocumentWidget({
     Key? key,
-    // this.color = const Color.fromARGB(255, 17, 0, 255),
     this.color,
     required this.model,
     required this.isRoot,
@@ -91,7 +87,6 @@ class HumanFriendlyDIDDocumentWidget extends StatelessWidget {
           // TODO [#29]: update with different palette for DIDs
           color: UiKit.palette.credentialBackground,
           shapeColor: UiKit.palette.credentialDetail.withOpacity(0.5),
-          // color: color,
           value: 0.0,
           shapeSize: 256.0,
           anchors: <Alignment>[
