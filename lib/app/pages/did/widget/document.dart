@@ -27,18 +27,15 @@ class DIDDocumentWidget extends StatelessWidget {
 
   const DIDDocumentWidget({
     Key? key,
-    this.color = const Color.fromARGB(255, 17, 0, 255),
     required this.model,
     this.trailing,
+    this.color,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Container(
         decoration: BaseBoxDecoration(
-          // TODO: update with different palette for DIDs
-          // color: UiKit.palette.credentialBackground,
-          // shapeColor: UiKit.palette.credentialDetail.withOpacity(0.2),
-          color: color,
+          color: UiKit.palette.credentialBackground,
           value: 0.0,
           shapeSize: 256.0,
           anchors: <Alignment>[
@@ -76,7 +73,7 @@ class HumanFriendlyDIDDocumentWidget extends StatelessWidget {
 
   const HumanFriendlyDIDDocumentWidget({
     Key? key,
-    this.color = const Color.fromARGB(255, 17, 0, 255),
+    this.color,
     required this.model,
     required this.isRoot,
     required this.rootEventDate,
@@ -88,9 +85,8 @@ class HumanFriendlyDIDDocumentWidget extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
         decoration: BaseBoxDecoration(
           // TODO [#29]: update with different palette for DIDs
-          // color: UiKit.palette.credentialBackground,
-          // shapeColor: UiKit.palette.credentialDetail.withOpacity(0.2),
-          color: color,
+          color: UiKit.palette.credentialBackground,
+          shapeColor: UiKit.palette.credentialDetail.withOpacity(0.5),
           value: 0.0,
           shapeSize: 256.0,
           anchors: <Alignment>[
@@ -98,7 +94,7 @@ class HumanFriendlyDIDDocumentWidget extends StatelessWidget {
             Alignment.bottomCenter,
           ],
           // value: animation.value,
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(8.0),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),

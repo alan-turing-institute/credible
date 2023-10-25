@@ -19,8 +19,8 @@ class CustomTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const color = Color.fromARGB(255, 7, 111, 10);
-    const lineColor = Color.fromARGB(255, 170, 171, 172);
+    const color = Colors.green;
+    const lineColor = Color.fromARGB(255, 171, 181, 186);
     const lineThickness = 1.5;
     return Container(
         child: TimelineTile(
