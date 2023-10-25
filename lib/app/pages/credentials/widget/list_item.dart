@@ -65,7 +65,7 @@ class __BaseItemState extends State<_BaseItem>
           margin: const EdgeInsets.symmetric(vertical: 4.0),
           decoration: BaseBoxDecoration(
             color: UiKit.palette.credentialBackground,
-            shapeColor: UiKit.palette.credentialDetail.withOpacity(0.2),
+            shapeColor: UiKit.palette.credentialDetail.withOpacity(0.5),
             value: 1.0,
             anchors: <Alignment>[
               Alignment.bottomRight,
@@ -117,7 +117,7 @@ class _LabeledItem extends StatelessWidget {
             icon,
             width: 16.0,
             height: 16.0,
-            color: UiKit.text.colorTextBody1,
+            color: UiKit.palette.credentialText,
           ),
           const SizedBox(width: 8.0),
           Expanded(
@@ -126,7 +126,7 @@ class _LabeledItem extends StatelessWidget {
               text: value,
               tooltip: '$label $value',
               style: GoogleFonts.poppins(
-                color: UiKit.text.colorTextBody1,
+                color: UiKit.palette.credentialText,
                 fontSize: 12.0,
                 fontWeight: FontWeight.w500,
               ),
@@ -159,18 +159,17 @@ class CredentialsListItem extends StatelessWidget {
         child: Row(
           children: <Widget>[
             Container(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(10.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16.0),
               ),
               child: HeroFix(
                 tag: 'credential/${item.id}/icon',
                 child: selected == null
-                    ? SvgPicture.asset(
-                        'assets/brand/spruce-icon.svg',
-                        width: 24.0,
-                        height: 24.0,
-                        color: UiKit.palette.icon,
+                    ? SizedBox(
+                        //placeholder, only show box in select mode
+                        width: 0,
+                        height: 0,
                       )
                     : selected!
                         ? Icon(
@@ -194,7 +193,7 @@ class CredentialsListItem extends StatelessWidget {
                     tag: 'credential/${item.id}/id',
                     text: item.alias ?? item.id,
                     style: GoogleFonts.poppins(
-                      color: UiKit.text.colorTextBody1,
+                      color: UiKit.palette.credentialText,
                       fontSize: 16.0,
                       fontWeight: FontWeight.w600,
                     ),

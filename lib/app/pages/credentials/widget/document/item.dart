@@ -21,18 +21,19 @@ class DocumentItemWidget extends StatelessWidget {
             style: Theme.of(context)
                 .textTheme
                 .overline!
-                .apply(color: UiKit.palette.credentialText.withOpacity(0.6)),
+                .apply(color: UiKit.palette.credentialText),
           ),
           const SizedBox(height: 2.0),
-          if (!value.isEmpty) TooltipText(
-            text: value,
-            style: Theme.of(context)
-                .textTheme
-                .caption!
-                .apply(color: UiKit.palette.credentialText),
-            maxLines: null,
-            softWrap: true,
-          ),
+          if (!value.isEmpty)
+            TooltipText(
+              text: value,
+              style: Theme.of(context)
+                  .textTheme
+                  .caption!
+                  .apply(color: UiKit.palette.credentialText),
+              maxLines: null,
+              softWrap: true,
+            ),
         ],
       );
 }
