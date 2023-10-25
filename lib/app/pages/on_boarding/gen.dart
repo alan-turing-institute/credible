@@ -36,8 +36,8 @@ class _OnBoardingGenPageState extends State<OnBoardingGenPage> {
       final key = await KeyGeneration.privateKey(mnemonic);
       final didKey =
           DIDKitProvider.instance.keyToDID(Constants.defaultDIDMethod, key);
-      final didIon = jsonDecode(
-              await trustchain_ffi.createOperationPhrase(phrase: mnemonic))
+      final didIon = jsonDecode(await trustchain_ffi.createOperationPhrase(
+              phrase: mnemonic))['did']
           .toString();
       await SecureStorageProvider.instance.set('key', key);
       await SecureStorageProvider.instance

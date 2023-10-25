@@ -8,16 +8,18 @@ class BaseTextField extends StatelessWidget {
   final TextInputType type;
   final TextCapitalization textCapitalization;
   final String? error;
+  final bool readOnly;
 
-  const BaseTextField({
-    Key? key,
-    required this.label,
-    required this.controller,
-    this.icon = Icons.edit,
-    this.type = TextInputType.text,
-    this.textCapitalization = TextCapitalization.none,
-    this.error,
-  }) : super(key: key);
+  const BaseTextField(
+      {Key? key,
+      required this.label,
+      required this.controller,
+      this.icon = Icons.edit,
+      this.type = TextInputType.text,
+      this.textCapitalization = TextCapitalization.none,
+      this.error,
+      this.readOnly = false})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +39,7 @@ class BaseTextField extends StatelessWidget {
         keyboardType: type,
         maxLines: 1,
         textCapitalization: textCapitalization,
+        readOnly: readOnly,
         decoration: InputDecoration(
           border: InputBorder.none,
           enabledBorder: InputBorder.none,

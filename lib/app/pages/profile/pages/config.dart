@@ -1,15 +1,11 @@
-import 'dart:convert';
-import 'dart:io';
 import 'package:credible/app/pages/profile/blocs/config.dart';
-import 'package:credible/app/pages/profile/blocs/profile.dart';
 import 'package:credible/app/pages/profile/models/config.dart';
-import 'package:credible/app/pages/profile/models/profile.dart';
 import 'package:credible/app/pages/profile/models/root.dart';
+import 'package:credible/app/pages/profile/module.dart';
 import 'package:credible/app/shared/constants.dart';
 import 'package:credible/app/shared/globals.dart';
 import 'package:credible/app/shared/ui/ui.dart';
 import 'package:credible/app/shared/widget/back_leading_button.dart';
-import 'package:credible/app/shared/widget/base/button.dart';
 import 'package:credible/app/shared/widget/base/page.dart';
 import 'package:credible/app/shared/widget/base/text_field.dart';
 import 'package:flutter/cupertino.dart';
@@ -27,22 +23,25 @@ class ConfigPage extends StatefulWidget {
 }
 
 class _ConfigPageState extends State<ConfigPage> {
-  // TODO: replace with toggle?
   late TextEditingController did;
   late TextEditingController trustchainEndpoint;
   late RootConfigModel rootConfigModel;
   late TextEditingController confirmationCodeController;
+  late String didIon;
+  late String didKey;
+  bool didIonMethod = false;
   final ValueNotifier<bool> _rootEventDateIsSet = ValueNotifier<bool>(false);
-  // TODO: link to toggle
-  final ValueNotifier<bool> _didIonMethod = ValueNotifier<bool>(false);
 
   @override
   void initState() {
     super.initState();
     final config_state = Modular.get<ConfigBloc>().state;
-    final config_model =
+    var config_model =
         config_state is ConfigStateDefault ? config_state.model : ConfigModel();
     did = TextEditingController(text: config_model.did());
+    didIon = config_model.didIon;
+    didKey = config_model.didKey;
+    didIonMethod = config_model.didIonMethod == 'false' ? false : true;
     trustchainEndpoint =
         TextEditingController(text: config_model.trustchainEndpoint);
     // Initialise the root config model:
@@ -74,10 +73,10 @@ class _ConfigPageState extends State<ConfigPage> {
       titleTrailing: InkWell(
         borderRadius: BorderRadius.circular(8.0),
         onTap: () {
-          // TODO: save not working here
           Modular.get<ConfigBloc>().add(ConfigEventUpdate(ConfigModel(
-            // TODO: add update to 'didIonMethod'
-            // did: did.text,
+            didIon: didIon,
+            didKey: didKey,
+            didIonMethod: didIonMethod.toString(),
             trustchainEndpoint: trustchainEndpoint.text,
             rootEventDate: _rootEventDateIsSet.value
                 ? rootConfigModel.date.toString()
@@ -94,7 +93,8 @@ class _ConfigPageState extends State<ConfigPage> {
                 ? ''
                 : rootConfigModel.timestamp.toString(),
           )));
-          Modular.to.pop();
+          // TODO: fix to reload ProfilePage so that DID is updated
+          Modular.to.pop(context);
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(
@@ -116,23 +116,6 @@ class _ConfigPageState extends State<ConfigPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Text(
-              localizations.configSubtitle,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.subtitle2,
-            ),
-          ),
-          const SizedBox(height: 16.0),
-          // TODO: replace wit toggle?
-          BaseTextField(
-            label: localizations.didLabel,
-            controller: did,
-            icon: Icons.person,
-            textCapitalization: TextCapitalization.words,
-          ),
-          const SizedBox(height: 16.0),
           // TODO: move to a separate rootEventDate widget.
           Container(
             decoration: BoxDecoration(
@@ -199,6 +182,28 @@ class _ConfigPageState extends State<ConfigPage> {
               },
             ),
           ),
+          const SizedBox(height: 16.0),
+          SwitchListTile(
+            tileColor: Color.fromARGB(255, 255, 255, 255),
+            title: const Text('DID ION mode'),
+            subtitle: Text('Use did:ion instead of did:key'),
+            value: didIonMethod,
+            onChanged: (bool value) {
+              setState(() {
+                didIonMethod = value;
+                print(didIonMethod);
+                print(did.value.text);
+
+                did.text = didIonMethod == false ? didKey : didIon;
+              });
+            },
+          ),
+          const SizedBox(height: 16.0),
+          BaseTextField(
+              label: localizations.didLabel,
+              controller: did,
+              readOnly: true,
+              icon: Icons.perm_identity),
           const SizedBox(height: 16.0),
           BaseTextField(
             label: localizations.trustchainEndpoint,

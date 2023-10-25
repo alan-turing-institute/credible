@@ -1,8 +1,6 @@
 import 'package:bloc/bloc.dart';
-import 'package:credible/app/interop/didkit/didkit.dart';
 import 'package:credible/app/interop/secure_storage/secure_storage.dart';
 import 'package:credible/app/pages/profile/models/config.dart';
-import 'package:credible/app/shared/constants.dart';
 import 'package:credible/app/shared/model/message.dart';
 import 'package:logging/logging.dart';
 
@@ -45,14 +43,13 @@ class ConfigBloc extends Bloc<ConfigEvent, ConfigState> {
     try {
       yield ConfigStateWorking();
 
-      // Set during onboarding:
+      // Set during onboarding so will not be null
       final didKey =
-          await SecureStorageProvider.instance.get(ConfigModel.didKeyKey);
+          (await SecureStorageProvider.instance.get(ConfigModel.didKeyKey))!;
       final didIon =
-          await SecureStorageProvider.instance.get(ConfigModel.didIonKey);
-      final didIonMethod = await SecureStorageProvider.instance
-              .get(ConfigModel.didIonMethodKey) ??
-          'false';
+          (await SecureStorageProvider.instance.get(ConfigModel.didIonKey))!;
+      final didIonMethod = (await SecureStorageProvider.instance
+          .get(ConfigModel.didIonMethodKey))!;
 
       final trustchainEndpoint = await SecureStorageProvider.instance
               .get(ConfigModel.trustchainEndpointKey) ??
@@ -77,8 +74,8 @@ class ConfigBloc extends Bloc<ConfigEvent, ConfigState> {
           '';
 
       final model = ConfigModel(
-        didKey: didKey!,
-        didIon: didIon!,
+        didKey: didKey,
+        didIon: didIon,
         didIonMethod: didIonMethod,
         trustchainEndpoint: trustchainEndpoint,
         rootEventDate: rootEventDate,
@@ -106,19 +103,9 @@ class ConfigBloc extends Bloc<ConfigEvent, ConfigState> {
     try {
       yield ConfigStateWorking();
 
-      // final key = await SecureStorageProvider.instance.get('key');
-
-      await SecureStorageProvider.instance.set(
-        ConfigModel.didKeyKey,
-        event.model.didKey,
-      );
       await SecureStorageProvider.instance.set(
         ConfigModel.didIonMethodKey,
         event.model.didIonMethod,
-      );
-      await SecureStorageProvider.instance.set(
-        ConfigModel.didIonKey,
-        event.model.didIon,
       );
       await SecureStorageProvider.instance.set(
         ConfigModel.trustchainEndpointKey,
