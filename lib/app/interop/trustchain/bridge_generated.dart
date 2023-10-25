@@ -42,10 +42,11 @@ abstract class TrustchainFfi {
 
   FlutterRustBridgeTaskConstMeta get kVpIssuePresentationConstMeta;
 
-  /// Makes a new ION DID from a mnemonic phrase.
-  Future<String> createOperationPhrase({required String phrase, dynamic hint});
+  /// Makes a new ION DID from a mnemonic.
+  Future<String> createOperationMnemonic(
+      {required String mnemonic, dynamic hint});
 
-  FlutterRustBridgeTaskConstMeta get kCreateOperationPhraseConstMeta;
+  FlutterRustBridgeTaskConstMeta get kCreateOperationMnemonicConstMeta;
 }
 
 class TrustchainFfiImpl implements TrustchainFfi {
@@ -155,22 +156,23 @@ class TrustchainFfiImpl implements TrustchainFfi {
         argNames: ["presentation", "opts", "jwkJson"],
       );
 
-  Future<String> createOperationPhrase({required String phrase, dynamic hint}) {
-    var arg0 = _platform.api2wire_String(phrase);
+  Future<String> createOperationMnemonic(
+      {required String mnemonic, dynamic hint}) {
+    var arg0 = _platform.api2wire_String(mnemonic);
     return _platform.executeNormal(FlutterRustBridgeTask(
       callFfi: (port_) =>
-          _platform.inner.wire_create_operation_phrase(port_, arg0),
+          _platform.inner.wire_create_operation_mnemonic(port_, arg0),
       parseSuccessData: _wire2api_String,
-      constMeta: kCreateOperationPhraseConstMeta,
-      argValues: [phrase],
+      constMeta: kCreateOperationMnemonicConstMeta,
+      argValues: [mnemonic],
       hint: hint,
     ));
   }
 
-  FlutterRustBridgeTaskConstMeta get kCreateOperationPhraseConstMeta =>
+  FlutterRustBridgeTaskConstMeta get kCreateOperationMnemonicConstMeta =>
       const FlutterRustBridgeTaskConstMeta(
-        debugName: "create_operation_phrase",
-        argNames: ["phrase"],
+        debugName: "create_operation_mnemonic",
+        argNames: ["mnemonic"],
       );
 
   void dispose() {
@@ -416,22 +418,23 @@ class TrustchainFfiWire implements FlutterRustBridgeWireBase {
           void Function(int, ffi.Pointer<wire_uint_8_list>,
               ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
 
-  void wire_create_operation_phrase(
+  void wire_create_operation_mnemonic(
     int port_,
-    ffi.Pointer<wire_uint_8_list> phrase,
+    ffi.Pointer<wire_uint_8_list> mnemonic,
   ) {
-    return _wire_create_operation_phrase(
+    return _wire_create_operation_mnemonic(
       port_,
-      phrase,
+      mnemonic,
     );
   }
 
-  late final _wire_create_operation_phrasePtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Void Function(ffi.Int64,
-              ffi.Pointer<wire_uint_8_list>)>>('wire_create_operation_phrase');
-  late final _wire_create_operation_phrase = _wire_create_operation_phrasePtr
-      .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
+  late final _wire_create_operation_mnemonicPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>)>>(
+      'wire_create_operation_mnemonic');
+  late final _wire_create_operation_mnemonic =
+      _wire_create_operation_mnemonicPtr
+          .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
 
   ffi.Pointer<wire_uint_8_list> new_uint_8_list_0(
     int len,
