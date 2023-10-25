@@ -159,9 +159,29 @@ class CredentialsListItem extends StatelessWidget {
         child: Row(
           children: <Widget>[
             Container(
-              // padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(10.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16.0),
+              ),
+              child: HeroFix(
+                tag: 'credential/${item.id}/icon',
+                child: selected == null
+                    ? SizedBox(
+                        //placeholder, only show box in select mode
+                        width: 0,
+                        height: 0,
+                      )
+                    : selected!
+                        ? Icon(
+                            Icons.check_box,
+                            size: 24.0,
+                            color: UiKit.palette.icon,
+                          )
+                        : Icon(
+                            Icons.check_box_outline_blank,
+                            size: 24.0,
+                            color: UiKit.palette.icon,
+                          ),
               ),
             ),
             const SizedBox(width: 16.0),
