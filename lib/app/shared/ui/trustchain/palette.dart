@@ -11,7 +11,8 @@ class TrustchainPalette extends UiPalette {
   static const orange = Color.fromRGBO(255, 125, 0, 1.0);
   static const light = Color.fromRGBO(247, 235, 255, 1.0);
 
-  static const text = Color(0xff324854);
+  static const text = blue;
+  // static const text = Color(0xff324854);
 
   static const lightGrey = Color(0xffF6F7FA);
   static const greyPurple = Color(0xffE8E8F4);
