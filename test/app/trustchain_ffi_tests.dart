@@ -83,7 +83,7 @@ void main() {
       final mnemonic =
           'state draft moral repeat knife trend animal pretty delay collect fall adjust';
       final didAndCreateOperation = jsonDecode(
-          await trustchain_ffi.createOperationPhrase(phrase: mnemonic));
+          await trustchain_ffi.createOperationMnemonic(mnemonic: mnemonic));
       assert('did:ion:test:EiB_YFqM3CcO93dnjlNWfljYesSUQxP_tzxEOQsXE3T4MQ' ==
           didAndCreateOperation['did'].toString());
     });
