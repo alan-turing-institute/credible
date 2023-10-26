@@ -12,7 +12,7 @@ void main() {
       expect(
           generatedKey,
           equals(
-              '{"kty":"OKP","crv":"Ed25519","d":"wHwSUdy4a00qTxAhnuOHeWpai4ERjdZGslaou-Lig5g=","x":"AI4pdGWalv3JXZcatmtBM8OfSIBCFC0o_RNzTg-mEAh6"}'));
+              '{"kty":"OKP","crv":"Ed25519","d":"wHwSUdy4a00qTxAhnuOHeWpai4ERjdZGslaou-Lig5g=","x":"jil0ZZqW_cldlxq2a0Ezw59IgEIULSj9E3NOD6YQCHo="}'));
     });
   });
 }
