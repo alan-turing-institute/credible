@@ -6,11 +6,15 @@ import 'package:dio/dio.dart';
 
 import 'config.dart';
 
-Future<DIDModel> resolveDid(String did) async {
+Future<Response> resolveDidResponse(String did) async {
   final endpoint = (await ffi_config_instance.get_trustchain_endpoint());
   final route = '/did/' + did;
   final uri = Uri.parse(endpoint + route);
-  return DIDModel.fromMap((await Dio().getUri(uri)).data);
+  return await Dio().getUri(uri);
+}
+
+Future<DIDModel> resolveDid(String did) async {
+  return DIDModel.fromMap((await resolveDidResponse(did)).data);
 }
 
 // TODO [#43]: replace with FFI call
