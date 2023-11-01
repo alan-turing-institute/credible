@@ -1,16 +1,19 @@
 import 'dart:convert';
+import 'dart:isolate';
 
 import 'package:credible/app/app_widget.dart';
 import 'package:credible/app/interop/chapi/chapi.dart';
 import 'package:credible/app/interop/didkit/didkit.dart';
 import 'package:credible/app/interop/secure_storage/secure_storage.dart';
 import 'package:credible/app/pages/credentials/blocs/scan.dart';
+import 'package:credible/app/shared/spv.dart';
 import 'package:credible/app/shared/ui/ui.dart';
 import 'package:credible/app/shared/widget/base/page.dart';
 import 'package:credible/app/shared/widget/brand.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 class SplashPage extends StatefulWidget {
@@ -19,9 +22,28 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
+  void _initializeSpv() async {
+    final directory = await getApplicationDocumentsDirectory();
+    print('directory.path:');
+    print(directory.path);
+    await Isolate.spawn(initializeSpv, directory.path);
+    // TODOs:
+    // - delete the headers.db file and upload the fully synced file from
+    // ~/.nakamoto/testnet/headers.db (for teseting)
+    // - try starting the isolate with pause = true
+    // - return the isolate from this function, see:
+    // https://blog.codemagic.io/understanding-flutter-isolates/
+    // - try passing a sendPort as the message argument to spawn() and use
+    // that sendPort to communicate with the spawned thread. (Is this useful,
+    // given that we working across the flutter-rust bridge?)
+  }
+
   @override
   void initState() {
     super.initState();
+
+    // Initialize the Bitcoin SPV mode.
+    _initializeSpv();
     print(DIDKitProvider.instance.getVersion());
     Future.delayed(
       const Duration(
