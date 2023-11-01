@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:convert';
+
 import 'package:credible/app/pages/credentials/models/credential_status.dart';
 import 'package:credible/app/shared/globals.dart';
 import 'package:uuid/uuid.dart';
@@ -52,4 +55,13 @@ class CredentialModel {
 
   Map<String, dynamic> toMap() =>
       {'id': id, 'alias': alias, 'image': image, 'data': data};
+
+  // Converts the credential to TinyVP format by serializing as JSON,
+  // gzipping and then base64 encoding.
+  String asTinyVP() {
+    final json = jsonEncode(data);
+    final utf8_encoded = utf8.encode(json);
+    final gzipped = gzip.encode(utf8_encoded);
+    return base64.encode(gzipped);
+  }
 }
