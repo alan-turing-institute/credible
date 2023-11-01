@@ -41,6 +41,40 @@ abstract class TrustchainFfi {
       dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kVpIssuePresentationConstMeta;
+
+  /// Initializes a local Bitcoin SPV client with a directory path for
+  /// writing block headers data.
+  Future<void> spvInitialize(
+      {required String path,
+      required bool testnet,
+      String? logLevel,
+      dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kSpvInitializeConstMeta;
+
+  /// Shuts down the local Bitcoin SPV client.
+  Future<void> spvShutdown(
+      {required String path, required bool testnet, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kSpvShutdownConstMeta;
+
+  /// Gets the current synchronised block height of the local Bitcoin SPV node.
+  Future<String> spvGetTip(
+      {required String path,
+      required bool testnet,
+      int? timeoutMillis,
+      dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kSpvGetTipConstMeta;
+
+  /// Gets a block header from the local Bitcoin SPV client.
+  Future<String> spvGetBlockHeader(
+      {required String hash,
+      required String path,
+      required bool testnet,
+      dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kSpvGetBlockHeaderConstMeta;
 }
 
 class TrustchainFfiImpl implements TrustchainFfi {
@@ -150,6 +184,97 @@ class TrustchainFfiImpl implements TrustchainFfi {
         argNames: ["presentation", "opts", "jwkJson"],
       );
 
+  Future<void> spvInitialize(
+      {required String path,
+      required bool testnet,
+      String? logLevel,
+      dynamic hint}) {
+    var arg0 = _platform.api2wire_String(path);
+    var arg1 = testnet;
+    var arg2 = _platform.api2wire_opt_String(logLevel);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) =>
+          _platform.inner.wire_spv_initialize(port_, arg0, arg1, arg2),
+      parseSuccessData: _wire2api_unit,
+      constMeta: kSpvInitializeConstMeta,
+      argValues: [path, testnet, logLevel],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kSpvInitializeConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "spv_initialize",
+        argNames: ["path", "testnet", "logLevel"],
+      );
+
+  Future<void> spvShutdown(
+      {required String path, required bool testnet, dynamic hint}) {
+    var arg0 = _platform.api2wire_String(path);
+    var arg1 = testnet;
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_spv_shutdown(port_, arg0, arg1),
+      parseSuccessData: _wire2api_unit,
+      constMeta: kSpvShutdownConstMeta,
+      argValues: [path, testnet],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kSpvShutdownConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "spv_shutdown",
+        argNames: ["path", "testnet"],
+      );
+
+  Future<String> spvGetTip(
+      {required String path,
+      required bool testnet,
+      int? timeoutMillis,
+      dynamic hint}) {
+    var arg0 = _platform.api2wire_String(path);
+    var arg1 = testnet;
+    var arg2 = _platform.api2wire_opt_box_autoadd_u32(timeoutMillis);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) =>
+          _platform.inner.wire_spv_get_tip(port_, arg0, arg1, arg2),
+      parseSuccessData: _wire2api_String,
+      constMeta: kSpvGetTipConstMeta,
+      argValues: [path, testnet, timeoutMillis],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kSpvGetTipConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "spv_get_tip",
+        argNames: ["path", "testnet", "timeoutMillis"],
+      );
+
+  Future<String> spvGetBlockHeader(
+      {required String hash,
+      required String path,
+      required bool testnet,
+      dynamic hint}) {
+    var arg0 = _platform.api2wire_String(hash);
+    var arg1 = _platform.api2wire_String(path);
+    var arg2 = testnet;
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) =>
+          _platform.inner.wire_spv_get_block_header(port_, arg0, arg1, arg2),
+      parseSuccessData: _wire2api_String,
+      constMeta: kSpvGetBlockHeaderConstMeta,
+      argValues: [hash, path, testnet],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kSpvGetBlockHeaderConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "spv_get_block_header",
+        argNames: ["hash", "path", "testnet"],
+      );
+
   void dispose() {
     _platform.dispose();
   }
@@ -166,9 +291,23 @@ class TrustchainFfiImpl implements TrustchainFfi {
   Uint8List _wire2api_uint_8_list(dynamic raw) {
     return raw as Uint8List;
   }
+
+  void _wire2api_unit(dynamic raw) {
+    return;
+  }
 }
 
 // Section: api2wire
+
+@protected
+bool api2wire_bool(bool raw) {
+  return raw;
+}
+
+@protected
+int api2wire_u32(int raw) {
+  return raw;
+}
 
 @protected
 int api2wire_u8(int raw) {
@@ -186,6 +325,21 @@ class TrustchainFfiPlatform extends FlutterRustBridgeBase<TrustchainFfiWire> {
   @protected
   ffi.Pointer<wire_uint_8_list> api2wire_String(String raw) {
     return api2wire_uint_8_list(utf8.encoder.convert(raw));
+  }
+
+  @protected
+  ffi.Pointer<ffi.Uint32> api2wire_box_autoadd_u32(int raw) {
+    return inner.new_box_autoadd_u32_0(api2wire_u32(raw));
+  }
+
+  @protected
+  ffi.Pointer<wire_uint_8_list> api2wire_opt_String(String? raw) {
+    return raw == null ? ffi.nullptr : api2wire_String(raw);
+  }
+
+  @protected
+  ffi.Pointer<ffi.Uint32> api2wire_opt_box_autoadd_u32(int? raw) {
+    return raw == null ? ffi.nullptr : api2wire_box_autoadd_u32(raw);
   }
 
   @protected
@@ -392,6 +546,109 @@ class TrustchainFfiWire implements FlutterRustBridgeWireBase {
       _wire_vp_issue_presentationPtr.asFunction<
           void Function(int, ffi.Pointer<wire_uint_8_list>,
               ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
+
+  void wire_spv_initialize(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> path,
+    bool testnet,
+    ffi.Pointer<wire_uint_8_list> log_level,
+  ) {
+    return _wire_spv_initialize(
+      port_,
+      path,
+      testnet,
+      log_level,
+    );
+  }
+
+  late final _wire_spv_initializePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>, ffi.Bool,
+              ffi.Pointer<wire_uint_8_list>)>>('wire_spv_initialize');
+  late final _wire_spv_initialize = _wire_spv_initializePtr.asFunction<
+      void Function(int, ffi.Pointer<wire_uint_8_list>, bool,
+          ffi.Pointer<wire_uint_8_list>)>();
+
+  void wire_spv_shutdown(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> path,
+    bool testnet,
+  ) {
+    return _wire_spv_shutdown(
+      port_,
+      path,
+      testnet,
+    );
+  }
+
+  late final _wire_spv_shutdownPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
+              ffi.Bool)>>('wire_spv_shutdown');
+  late final _wire_spv_shutdown = _wire_spv_shutdownPtr
+      .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>, bool)>();
+
+  void wire_spv_get_tip(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> path,
+    bool testnet,
+    ffi.Pointer<ffi.Uint32> timeout_millis,
+  ) {
+    return _wire_spv_get_tip(
+      port_,
+      path,
+      testnet,
+      timeout_millis,
+    );
+  }
+
+  late final _wire_spv_get_tipPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>, ffi.Bool,
+              ffi.Pointer<ffi.Uint32>)>>('wire_spv_get_tip');
+  late final _wire_spv_get_tip = _wire_spv_get_tipPtr.asFunction<
+      void Function(
+          int, ffi.Pointer<wire_uint_8_list>, bool, ffi.Pointer<ffi.Uint32>)>();
+
+  void wire_spv_get_block_header(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> hash,
+    ffi.Pointer<wire_uint_8_list> path,
+    bool testnet,
+  ) {
+    return _wire_spv_get_block_header(
+      port_,
+      hash,
+      path,
+      testnet,
+    );
+  }
+
+  late final _wire_spv_get_block_headerPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(
+              ffi.Int64,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Bool)>>('wire_spv_get_block_header');
+  late final _wire_spv_get_block_header =
+      _wire_spv_get_block_headerPtr.asFunction<
+          void Function(int, ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>, bool)>();
+
+  ffi.Pointer<ffi.Uint32> new_box_autoadd_u32_0(
+    int value,
+  ) {
+    return _new_box_autoadd_u32_0(
+      value,
+    );
+  }
+
+  late final _new_box_autoadd_u32_0Ptr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Uint32> Function(ffi.Uint32)>>(
+          'new_box_autoadd_u32_0');
+  late final _new_box_autoadd_u32_0 = _new_box_autoadd_u32_0Ptr
+      .asFunction<ffi.Pointer<ffi.Uint32> Function(int)>();
 
   ffi.Pointer<wire_uint_8_list> new_uint_8_list_0(
     int len,
