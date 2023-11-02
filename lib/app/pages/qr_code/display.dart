@@ -26,7 +26,7 @@ class _QrCodeDisplayPageState extends State<QrCodeDisplayPage> {
   }
 
   void setTinyVP() async {
-    final _tinyVP = await widget.credentialModel.asTinyVP();
+    final _tinyVP = await widget.credentialModel.asTinyVp();
     setState(() {
       tinyVP = _tinyVP;
     });

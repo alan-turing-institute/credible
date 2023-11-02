@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'dart:convert';
 
@@ -8,6 +9,7 @@ import 'package:credible/app/shared/config.dart';
 import 'package:credible/app/shared/constants.dart';
 import 'package:credible/app/shared/globals.dart';
 import 'package:uuid/uuid.dart';
+import 'package:canonical_json/canonical_json.dart';
 
 class CredentialModel {
   final String id;
@@ -76,33 +78,63 @@ class CredentialModel {
     });
   }
 
-  Future<String> asVP() async {
+  Future<String> asVp() async {
     final ffiConfig = await ffi_config_instance.get_ffi_config();
     // TODO: replace 'key' with constant
     final key = (await SecureStorageProvider.instance.get('key'))!;
-    final presentation = await trustchain_ffi.vpIssuePresentation(
+    final vp = await trustchain_ffi.vpIssuePresentation(
         presentation: asPresentation(),
         opts: jsonEncode(ffiConfig),
         jwkJson: key);
-    return presentation;
+    final bytes = canonicalJson.encode(vp);
+    final canonical_vp = canonicalJson.decode(bytes).toString();
+    // print('-----------asVP-----------');
+    // log(canonical_vp);
+    // print('-----------asVP-----------');
+    // print('Length in bytes:');
+    // print(canonical_vp.codeUnits.length);
+    return canonical_vp;
   }
 
-  // Converts the credential to TinyVP format by serializing as JSON,
-  // gzipping and then base64 encoding.
-  Future<String> asTinyVP() async {
-    final vp = await asVP();
-    final utf8_encoded = utf8.encode(vp);
-    final gzipped = gzip.encode(utf8_encoded);
-    final jsonStr = {'type': Constants.tinyVP, 'data': base64.encode(gzipped)};
+  factory CredentialModel.fromVp(String vp) {
+    final map = jsonDecode(vp);
+    assert(map.containsKey('verifiableCredential'));
+    final data = map['verifiableCredential'];
+    assert(data.containsKey('id'));
+    final id = data['id'];
+    return CredentialModel.fromMap({'data': data, 'id': id});
+  }
+
+  // Converts the credential to TinyVP format by serializing as
+  // canonical JSON, gzipping, base64 encoding & then placing the
+  // result as data in a map with standardized keys.
+  Future<String> asTinyVp() async {
+    final vp = await asVp();
+    final bytes = canonicalJson.encode(vp);
+    final gzipped = gzip.encode(bytes);
+    final data = base64.encode(gzipped);
+    final map = {'type': Constants.tinyVP, 'data': data};
+    final jsonStr = jsonEncode(map);
+    // print('-----------asTinyVP-----------');
+    // log(jsonStr.toString());
+    // print('-----------asTinyVP-----------');
+    // print('Length in bytes:');
+    // print(jsonStr.toString().codeUnits.length);
     return jsonStr.toString();
   }
 
-  factory CredentialModel.fromTinyVP(dynamic data) {
+  // Deserializes a credential from TinyVP format by extracting data
+  // from a map with standardized keys, base64 decoding, gzip decoding
+  // & then decoding the resulting canonical JSON.
+  factory CredentialModel.fromTinyVp(String tinyVp) {
+    final map = jsonDecode(tinyVp);
+    assert(map.containsKey('type'));
+    assert(map['type'].toString() == Constants.tinyVP);
+    assert(map.containsKey('data'));
+    final data = map['data'];
     final gzipped = base64.decode(data);
-    final utf8_encoded = gzip.decode(gzipped);
-    final json = utf8.decode(utf8_encoded);
-    // return json;
-    final m = {'data': json};
-    return CredentialModel.fromMap(m);
+    final bytes = gzip.decode(gzipped);
+    final json = canonicalJson.decode(bytes);
+    return CredentialModel.fromVp(json.toString());
   }
 }

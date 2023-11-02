@@ -1,0 +1,45 @@
+{
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1"
+  ],
+  "type": [
+    "VerifiablePresentation"
+  ],
+  "verifiableCredential": {
+    "@context": [
+      "https://www.w3.org/2018/credentials/v1",
+      "https://www.w3.org/2018/credentials/examples/v1"
+    ],
+    "id": "urn:uuid:481935de-f93d-11ed-a309-d7ec1d02e89c",
+    "type": [
+      "VerifiableCredential"
+    ],
+    "credentialSubject": {
+      "id": "did:key:z6MkexqqxoDx6TcAfzL3AK66Xgej9H71wug6fY3dH1jgfFyM",
+      "degree": {
+        "college": "University of Oxbridge",
+        "name": "Master of Science",
+        "type": "MastersDegree"
+      },
+      "familyName": "Smith",
+      "givenName": "Jane"
+    },
+    "issuer": "did:ion:test:EiDSE2lEM65nYrEqVvQO5C3scYhkv1KmZzq0S0iZmNKf1Q",
+    "issuanceDate": "2023-10-18T08:53:45.911198181Z",
+    "proof": {
+      "type": "EcdsaSecp256k1Signature2019",
+      "proofPurpose": "assertionMethod",
+      "verificationMethod": "did:ion:test:EiDSE2lEM65nYrEqVvQO5C3scYhkv1KmZzq0S0iZmNKf1Q#1XwCn9FKSqaHETP7Dt0nULIdebGWHANV9GP0GYPjC1A",
+      "created": "2023-10-18T08:53:46.088555625Z",
+      "jws": "eyJhbGciOiJFUzI1NksiLCJjcml0IjpbImI2NCJdLCJiNjQiOmZhbHNlfQ..m9jiCngSbFRykvnMlO08DmITUUEGHaYeBImam4enG9Ug3GAQ1prNHERbvI54_M8AVAgo4Q3NKpRCBL-zH1hnzA"
+    }
+  },
+  "proof": {
+    "type": "Ed25519Signature2018",
+    "proofPurpose": "authentication",
+    "verificationMethod": "did:key:z6MkexqqxoDx6TcAfzL3AK66Xgej9H71wug6fY3dH1jgfFyM#z6MkexqqxoDx6TcAfzL3AK66Xgej9H71wug6fY3dH1jgfFyM",
+    "created": "2023-11-02T13:04:05.296517477Z",
+    "jws": "eyJhbGciOiJFZERTQSIsImNyaXQiOlsiYjY0Il0sImI2NCI6ZmFsc2V9..yodLvPeKzgy3qMU-A2NtFmuQ3PVjwNLYE1rOYtWbDkSFv_8TAYKSauNHGoG-IMciyOpeerT8Xg52pI86HDODCA"
+  },
+  "holder": "did:key:z6MkexqqxoDx6TcAfzL3AK66Xgej9H71wug6fY3dH1jgfFyM"
+}
