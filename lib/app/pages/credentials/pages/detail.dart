@@ -196,7 +196,7 @@ class _CredentialsDetailState
                   child: GestureDetector(
                     onTap: () => Modular.to.pushNamed(
                       '/qr-code/display',
-                      arguments: [widget.item.id, widget.item.asTinyVP()],
+                      arguments: [widget.item],
                     ),
                     child: Tooltip(
                       message: localizations.credentialDetailShareTooltip,

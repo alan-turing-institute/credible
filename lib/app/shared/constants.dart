@@ -12,4 +12,5 @@ class Constants {
     'linkedDataProofOptions': {}
   };
   static final int confirmationCodeMinimumLength = 3;
+  static const String tinyVP = 'TinyVP';
 }
