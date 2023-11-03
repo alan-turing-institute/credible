@@ -41,6 +41,12 @@ abstract class TrustchainFfi {
       dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kVpIssuePresentationConstMeta;
+
+  /// Makes a new ION DID from a mnemonic.
+  Future<String> createOperationMnemonic(
+      {required String mnemonic, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kCreateOperationMnemonicConstMeta;
 }
 
 class TrustchainFfiImpl implements TrustchainFfi {
@@ -148,6 +154,25 @@ class TrustchainFfiImpl implements TrustchainFfi {
       const FlutterRustBridgeTaskConstMeta(
         debugName: "vp_issue_presentation",
         argNames: ["presentation", "opts", "jwkJson"],
+      );
+
+  Future<String> createOperationMnemonic(
+      {required String mnemonic, dynamic hint}) {
+    var arg0 = _platform.api2wire_String(mnemonic);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) =>
+          _platform.inner.wire_create_operation_mnemonic(port_, arg0),
+      parseSuccessData: _wire2api_String,
+      constMeta: kCreateOperationMnemonicConstMeta,
+      argValues: [mnemonic],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kCreateOperationMnemonicConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "create_operation_mnemonic",
+        argNames: ["mnemonic"],
       );
 
   void dispose() {
@@ -392,6 +417,24 @@ class TrustchainFfiWire implements FlutterRustBridgeWireBase {
       _wire_vp_issue_presentationPtr.asFunction<
           void Function(int, ffi.Pointer<wire_uint_8_list>,
               ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
+
+  void wire_create_operation_mnemonic(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> mnemonic,
+  ) {
+    return _wire_create_operation_mnemonic(
+      port_,
+      mnemonic,
+    );
+  }
+
+  late final _wire_create_operation_mnemonicPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>)>>(
+      'wire_create_operation_mnemonic');
+  late final _wire_create_operation_mnemonic =
+      _wire_create_operation_mnemonicPtr
+          .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
 
   ffi.Pointer<wire_uint_8_list> new_uint_8_list_0(
     int len,

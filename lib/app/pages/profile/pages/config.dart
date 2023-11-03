@@ -1,17 +1,22 @@
 import 'dart:convert';
-import 'dart:io';
+
+import 'package:credible/app/interop/secure_storage/secure_storage.dart';
+import 'package:credible/app/interop/trustchain/trustchain.dart';
+import 'package:credible/app/pages/credentials/blocs/scan.dart';
 import 'package:credible/app/pages/profile/blocs/config.dart';
-import 'package:credible/app/pages/profile/blocs/profile.dart';
 import 'package:credible/app/pages/profile/models/config.dart';
-import 'package:credible/app/pages/profile/models/profile.dart';
 import 'package:credible/app/pages/profile/models/root.dart';
+import 'package:credible/app/pages/profile/module.dart';
+import 'package:credible/app/shared/config.dart';
 import 'package:credible/app/shared/constants.dart';
 import 'package:credible/app/shared/globals.dart';
+import 'package:credible/app/shared/model/message.dart';
 import 'package:credible/app/shared/ui/ui.dart';
 import 'package:credible/app/shared/widget/back_leading_button.dart';
-import 'package:credible/app/shared/widget/base/button.dart';
 import 'package:credible/app/shared/widget/base/page.dart';
 import 'package:credible/app/shared/widget/base/text_field.dart';
+import 'package:credible/app/shared/widget/confirm_dialog.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -31,15 +36,21 @@ class _ConfigPageState extends State<ConfigPage> {
   late TextEditingController trustchainEndpoint;
   late RootConfigModel rootConfigModel;
   late TextEditingController confirmationCodeController;
+  late String didIon;
+  late String didKey;
+  bool didIonMethod = false;
   final ValueNotifier<bool> _rootEventDateIsSet = ValueNotifier<bool>(false);
 
   @override
   void initState() {
     super.initState();
     final config_state = Modular.get<ConfigBloc>().state;
-    final config_model =
+    var config_model =
         config_state is ConfigStateDefault ? config_state.model : ConfigModel();
-    did = TextEditingController(text: config_model.did);
+    did = TextEditingController(text: config_model.did());
+    didIon = config_model.didIon;
+    didKey = config_model.didKey;
+    didIonMethod = config_model.didIonMethod == 'false' ? false : true;
     trustchainEndpoint =
         TextEditingController(text: config_model.trustchainEndpoint);
     // Initialise the root config model:
@@ -58,7 +69,7 @@ class _ConfigPageState extends State<ConfigPage> {
         root: rootIdentifier,
         timestamp: config_model.rootEventTime.isEmpty
             ? null
-            : int.parse(config_model.rootEventTime));
+            : parseIntOrNull(config_model.rootEventTime));
     confirmationCodeController = TextEditingController();
   }
 
@@ -71,9 +82,10 @@ class _ConfigPageState extends State<ConfigPage> {
       titleTrailing: InkWell(
         borderRadius: BorderRadius.circular(8.0),
         onTap: () {
-          // TODO: save not working here
           Modular.get<ConfigBloc>().add(ConfigEventUpdate(ConfigModel(
-            did: did.text,
+            didIon: didIon,
+            didKey: didKey,
+            didIonMethod: didIonMethod.toString(),
             trustchainEndpoint: trustchainEndpoint.text,
             rootEventDate: _rootEventDateIsSet.value
                 ? rootConfigModel.date.toString()
@@ -90,6 +102,7 @@ class _ConfigPageState extends State<ConfigPage> {
                 ? ''
                 : rootConfigModel.timestamp.toString(),
           )));
+          // TODO: fix to reload ProfilePage so that DID is updated
           Modular.to.pop();
         },
         child: Padding(
@@ -112,22 +125,6 @@ class _ConfigPageState extends State<ConfigPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Text(
-              localizations.configSubtitle,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.subtitle2,
-            ),
-          ),
-          const SizedBox(height: 16.0),
-          BaseTextField(
-            label: localizations.didLabel,
-            controller: did,
-            icon: Icons.person,
-            textCapitalization: TextCapitalization.words,
-          ),
-          const SizedBox(height: 16.0),
           // TODO: move to a separate rootEventDate widget.
           Container(
             decoration: BoxDecoration(
@@ -195,10 +192,101 @@ class _ConfigPageState extends State<ConfigPage> {
             ),
           ),
           const SizedBox(height: 16.0),
+          Container(
+              decoration: BoxDecoration(
+                color: UiKit.palette.textFieldBackground,
+                border: Border.all(color: UiKit.palette.textFieldBorder),
+                borderRadius: UiKit.constraints.textFieldRadius,
+              ),
+              child: Column(
+                children: [
+                  BaseTextField(
+                      label: localizations.didLabel,
+                      controller: did,
+                      padding: 24.0,
+                      readOnly: true,
+                      includeDecoration: false),
+                  SwitchListTile(
+                    tileColor: Color.fromARGB(255, 255, 255, 255),
+                    title: const Text('DID ION mode'),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 24.0),
+                    subtitle: Text('Use did:ion instead of did:key'),
+                    value: didIonMethod,
+                    onChanged: (bool value) async {
+                      if (value) {
+                        // Check if published
+                        try {
+                          // No need to publish
+                          final response =
+                              Map.from((await resolveDidResponse(didIon)).data);
+                          print(response);
+                          assert(response.containsKey('didDocument'));
+                        } catch (err) {
+                          print(err);
+                          // If not published, confirm submission
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return ConfirmDialog(
+                                title: 'Publish DID',
+                                subtitle:
+                                    'Do you wish to publish your did:ion DID?',
+                                yes: 'Publish',
+                                no: 'Cancel',
+                              );
+                            },
+                          );
+                          // As awaited cannot be null
+                          if (confirm!) {
+                            final mnemonic = (await SecureStorageProvider
+                                .instance
+                                .get('mnemonic'))!;
+                            final createOp = jsonDecode(
+                                (await trustchain_ffi.createOperationMnemonic(
+                                    mnemonic: mnemonic)))['createOperation'];
+                            // Send create operation
+                            final uri = Uri.parse((await ffi_config_instance
+                                    .get_trustchain_endpoint()) +
+                                '/operations');
+                            try {
+                              await Dio().post(uri.toString(),
+                                  data: jsonEncode(createOp));
+                              showOkDialog(
+                                  'Success',
+                                  'Your ION DID has been published.\n\n'
+                                      'It will be visible to others shortly.',
+                                  Icon(
+                                    Icons.check_circle_outline,
+                                    color: Colors.green,
+                                    size: 50,
+                                  ),
+                                  13.5);
+                            } catch (err) {
+                              value = false;
+                              showOkDialog(
+                                  'Failed to publish DID', 'Error: $err');
+                            }
+                          } else {
+                            value = false;
+                          }
+                        }
+                      }
+                      setState(() {
+                        didIonMethod = value;
+                        did.text = didIonMethod == false ? didKey : didIon;
+                      });
+                    },
+                  ),
+                ],
+              )),
+          const SizedBox(height: 16.0),
           BaseTextField(
             label: localizations.trustchainEndpoint,
             controller: trustchainEndpoint,
-            icon: Icons.http_sharp,
+            padding: 24.0,
+            icon: Uri.parse(trustchainEndpoint.text).scheme == 'https'
+                ? Icons.https_sharp
+                : Icons.http_sharp,
             textCapitalization: TextCapitalization.words,
           ),
         ],
@@ -206,13 +294,15 @@ class _ConfigPageState extends State<ConfigPage> {
     );
   }
 
+  void publishDIDION() async {}
+
   void handleRootEventDateButton() async {
     // If it is not already set, handle setting a new root event date.
     if (!_rootEventDateIsSet.value) {
       // If the selected date is not in the past, show an Error.
       if (!rootConfigModel.date
           .isBefore(DateTime.now().subtract(const Duration(days: 1)))) {
-        showErrorDialog('Invalid date',
+        showOkDialog('Invalid date',
             'The root event date must be in the past. Please try again.');
         return;
       }
@@ -221,7 +311,7 @@ class _ConfigPageState extends State<ConfigPage> {
       try {
         rootCandidates = await getRootCandidates(rootConfigModel.date);
       } catch (e) {
-        showErrorDialog('Server error',
+        showOkDialog('Server error',
             'There was an error connecting to the Trustchain server.\n\nPlease try again later.');
         return;
       }
@@ -236,7 +326,7 @@ class _ConfigPageState extends State<ConfigPage> {
 
       // If the confirmation code does not uniquely identify a root DID candidate, stop.
       if (matchingCandidates.length != 1) {
-        showErrorDialog('Invalid date/confirmation code',
+        showOkDialog('Invalid date/confirmation code',
             'The combination of root event date and confirmation code entered is not valid.\n\nPlease check and try again.');
         return;
       }
@@ -247,7 +337,7 @@ class _ConfigPageState extends State<ConfigPage> {
       try {
         rootTimestamp = await getBlockTimestamp(root.blockHeight);
       } catch (e) {
-        showErrorDialog('Server error',
+        showOkDialog('Server error',
             'There was an error connecting to the Trustchain server.\n\nPlease try again later.');
         return;
       }
@@ -255,7 +345,7 @@ class _ConfigPageState extends State<ConfigPage> {
       // Confirm that the timestamp returned by the server falls within the correct date.
       if (!validate_timestamp(rootTimestamp.timestamp, rootConfigModel.date)) {
         final localizations = AppLocalizations.of(context)!;
-        showErrorDialog(
+        showOkDialog(
             'Invalid timestamp',
             'The server returned an invalid timestamp.\n\nPlease check the "' +
                 localizations.trustchainEndpoint.replaceAll(':', '') +
@@ -312,15 +402,20 @@ class _ConfigPageState extends State<ConfigPage> {
     confirmationCodeController.clear();
   }
 
-  void showErrorDialog(String title, String content) async {
+  void showOkDialog(String title, String content,
+      [Icon? icon = null, double fontSize = 14]) async {
     await showDialog(
         context: context,
         builder: (context) => AlertDialog(
+              icon: icon,
               title: Text(
                 title,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              content: Text(content),
+              content: Text(
+                content,
+                style: TextStyle(fontSize: fontSize),
+              ),
               actions: [
                 TextButton(
                     child: const Text('OK'),

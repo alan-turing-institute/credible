@@ -175,12 +175,12 @@ class CredentialsListItem extends StatelessWidget {
                         ? Icon(
                             Icons.check_box,
                             size: 24.0,
-                            color: UiKit.palette.icon,
+                            color: UiKit.palette.credentialText,
                           )
                         : Icon(
                             Icons.check_box_outline_blank,
                             size: 24.0,
-                            color: UiKit.palette.icon,
+                            color: UiKit.palette.credentialText,
                           ),
               ),
             ),

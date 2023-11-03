@@ -1,8 +1,14 @@
 import 'package:credible/app/pages/profile/models/root.dart';
 
 class ConfigModel {
-  static const String didKey = 'config/did';
-  final String did;
+  static const String didIonMethodKey = 'config/didIonMethod';
+  final String didIonMethod;
+
+  static const String didKeyKey = 'config/didKey';
+  final String didKey;
+
+  static const String didIonKey = 'config/didIon';
+  final String didIon;
 
   static const String trustchainEndpointKey = 'config/trustchainEndpoint';
   final String trustchainEndpoint;
@@ -26,7 +32,9 @@ class ConfigModel {
   final String rootEventTime; // TODO: should be int?
 
   const ConfigModel({
-    this.did = '',
+    this.didIon = '',
+    this.didKey = '',
+    this.didIonMethod = 'false',
     this.trustchainEndpoint = '',
     this.rootEventDate = '',
     this.confirmationCode = '',
@@ -35,4 +43,8 @@ class ConfigModel {
     this.rootBlockHeight = '',
     this.rootEventTime = '',
   });
+
+  String did() {
+    return didIonMethod == 'false' ? didKey : didIon;
+  }
 }

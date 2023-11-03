@@ -57,7 +57,7 @@ class TrustchainPalette extends UiPalette {
       lightBlue; // this together with credentialBackground
 
   @override
-  Color get icon => lightGrey;
+  Color get icon => blue;
 
   @override
   Color get lightBorder => greyPurple;

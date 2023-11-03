@@ -1,8 +1,6 @@
 import 'package:bloc/bloc.dart';
-import 'package:credible/app/interop/didkit/didkit.dart';
 import 'package:credible/app/interop/secure_storage/secure_storage.dart';
 import 'package:credible/app/pages/profile/models/config.dart';
-import 'package:credible/app/shared/constants.dart';
 import 'package:credible/app/shared/model/message.dart';
 import 'package:logging/logging.dart';
 
@@ -45,8 +43,14 @@ class ConfigBloc extends Bloc<ConfigEvent, ConfigState> {
     try {
       yield ConfigStateWorking();
 
-      final did =
-          await SecureStorageProvider.instance.get(ConfigModel.didKey) ?? '';
+      // Set during onboarding so will not be null
+      final didKey =
+          (await SecureStorageProvider.instance.get(ConfigModel.didKeyKey))!;
+      final didIon =
+          (await SecureStorageProvider.instance.get(ConfigModel.didIonKey))!;
+      final didIonMethod = (await SecureStorageProvider.instance
+          .get(ConfigModel.didIonMethodKey))!;
+
       final trustchainEndpoint = await SecureStorageProvider.instance
               .get(ConfigModel.trustchainEndpointKey) ??
           '';
@@ -70,7 +74,9 @@ class ConfigBloc extends Bloc<ConfigEvent, ConfigState> {
           '';
 
       final model = ConfigModel(
-        did: did,
+        didKey: didKey,
+        didIon: didIon,
+        didIonMethod: didIonMethod,
         trustchainEndpoint: trustchainEndpoint,
         rootEventDate: rootEventDate,
         confirmationCode: confirmationCode,
@@ -97,13 +103,9 @@ class ConfigBloc extends Bloc<ConfigEvent, ConfigState> {
     try {
       yield ConfigStateWorking();
 
-      final key = await SecureStorageProvider.instance.get('key');
-      final did = event.model.did != ''
-          ? event.model.did
-          : DIDKitProvider.instance.keyToDID(Constants.defaultDIDMethod, key!);
       await SecureStorageProvider.instance.set(
-        ConfigModel.didKey,
-        did,
+        ConfigModel.didIonMethodKey,
+        event.model.didIonMethod,
       );
       await SecureStorageProvider.instance.set(
         ConfigModel.trustchainEndpointKey,
