@@ -71,3 +71,11 @@ String? extractEndpoint(dynamic did_document, String service_id) {
   }
   return null;
 }
+
+int? parseIntOrNull(s) {
+  try {
+    return (int.parse(s));
+  } catch (err) {
+    return (null);
+  }
+}

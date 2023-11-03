@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class BaseTextField extends StatelessWidget {
   final String label;
   final TextEditingController controller;
-  final IconData icon;
+  final IconData? icon;
   final TextInputType type;
   final TextCapitalization textCapitalization;
   final String? error;
@@ -16,7 +16,7 @@ class BaseTextField extends StatelessWidget {
       {Key? key,
       required this.label,
       required this.controller,
-      this.icon = Icons.edit,
+      this.icon,
       this.type = TextInputType.text,
       this.textCapitalization = TextCapitalization.none,
       this.error,

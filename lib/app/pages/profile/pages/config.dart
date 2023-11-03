@@ -69,7 +69,7 @@ class _ConfigPageState extends State<ConfigPage> {
         root: rootIdentifier,
         timestamp: config_model.rootEventTime.isEmpty
             ? null
-            : int.parse(config_model.rootEventTime));
+            : parseIntOrNull(config_model.rootEventTime));
     confirmationCodeController = TextEditingController();
   }
 
@@ -205,8 +205,7 @@ class _ConfigPageState extends State<ConfigPage> {
                       controller: did,
                       padding: 24.0,
                       readOnly: true,
-                      includeDecoration: false,
-                      icon: Icons.perm_identity),
+                      includeDecoration: false),
                   SwitchListTile(
                     tileColor: Color.fromARGB(255, 255, 255, 255),
                     title: const Text('DID ION mode'),
@@ -237,7 +236,7 @@ class _ConfigPageState extends State<ConfigPage> {
                               );
                             },
                           );
-                          // TODO: Check can we use "!" safely
+                          // As awaited cannot be null
                           if (confirm!) {
                             final mnemonic = (await SecureStorageProvider
                                 .instance
@@ -245,9 +244,6 @@ class _ConfigPageState extends State<ConfigPage> {
                             final createOp = jsonDecode(
                                 (await trustchain_ffi.createOperationMnemonic(
                                     mnemonic: mnemonic)))['createOperation'];
-                            // final createDid = jsonDecode(
-                            //     (await trustchain_ffi.createOperationMnemonic(
-                            //         mnemonic: mnemonic)))['did'];
                             // Send create operation
                             final uri = Uri.parse((await ffi_config_instance
                                     .get_trustchain_endpoint()) +
@@ -288,7 +284,9 @@ class _ConfigPageState extends State<ConfigPage> {
             label: localizations.trustchainEndpoint,
             controller: trustchainEndpoint,
             padding: 24.0,
-            icon: Icons.http_sharp,
+            icon: Uri.parse(trustchainEndpoint.text).scheme == 'https'
+                ? Icons.https_sharp
+                : Icons.http_sharp,
             textCapitalization: TextCapitalization.words,
           ),
         ],
