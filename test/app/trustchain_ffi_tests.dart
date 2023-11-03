@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:credible/app/shared/config.dart';
 import 'package:credible/app/shared/constants.dart';
 import 'package:credible/app/interop/trustchain/trustchain.dart';
+import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 
@@ -74,6 +76,16 @@ void main() {
           presentation: jsonEncode(pres),
           opts: jsonEncode(ffiConfig),
           jwkJson: key);
+    });
+
+    // Generate ION DID from mnemonic
+    test('Generate ION DID', () async {
+      final mnemonic =
+          'state draft moral repeat knife trend animal pretty delay collect fall adjust';
+      final didAndCreateOperation = jsonDecode(
+          await trustchain_ffi.createOperationMnemonic(mnemonic: mnemonic));
+      assert('did:ion:test:EiB_YFqM3CcO93dnjlNWfljYesSUQxP_tzxEOQsXE3T4MQ' ==
+          didAndCreateOperation['did'].toString());
     });
   });
 }

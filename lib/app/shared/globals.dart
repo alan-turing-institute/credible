@@ -1,14 +1,20 @@
+import 'package:credible/app/interop/secure_storage/secure_storage.dart';
 import 'package:credible/app/pages/chain/models/chain.dart';
 import 'package:credible/app/pages/did/models/did.dart';
+import 'package:credible/app/pages/profile/models/config.dart';
 import 'package:dio/dio.dart';
 
 import 'config.dart';
 
-Future<DIDModel> resolveDid(String did) async {
+Future<Response> resolveDidResponse(String did) async {
   final endpoint = (await ffi_config_instance.get_trustchain_endpoint());
   final route = '/did/' + did;
   final uri = Uri.parse(endpoint + route);
-  return DIDModel.fromMap((await Dio().getUri(uri)).data);
+  return await Dio().getUri(uri);
+}
+
+Future<DIDModel> resolveDid(String did) async {
+  return DIDModel.fromMap((await resolveDidResponse(did)).data);
 }
 
 // TODO [#43]: replace with FFI call
@@ -64,4 +70,12 @@ String? extractEndpoint(dynamic did_document, String service_id) {
     }
   }
   return null;
+}
+
+int? parseIntOrNull(s) {
+  try {
+    return (int.parse(s));
+  } catch (err) {
+    return (null);
+  }
 }

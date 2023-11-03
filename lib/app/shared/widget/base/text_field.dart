@@ -4,39 +4,49 @@ import 'package:flutter/material.dart';
 class BaseTextField extends StatelessWidget {
   final String label;
   final TextEditingController controller;
-  final IconData icon;
+  final IconData? icon;
   final TextInputType type;
   final TextCapitalization textCapitalization;
   final String? error;
+  final double padding;
+  final bool includeDecoration;
+  final bool readOnly;
 
-  const BaseTextField({
-    Key? key,
-    required this.label,
-    required this.controller,
-    this.icon = Icons.edit,
-    this.type = TextInputType.text,
-    this.textCapitalization = TextCapitalization.none,
-    this.error,
-  }) : super(key: key);
+  const BaseTextField(
+      {Key? key,
+      required this.label,
+      required this.controller,
+      this.icon,
+      this.type = TextInputType.text,
+      this.textCapitalization = TextCapitalization.none,
+      this.error,
+      this.padding = 24.0,
+      this.includeDecoration = true,
+      this.readOnly = false})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: UiKit.constraints.textFieldPadding,
-      padding: const EdgeInsets.symmetric(
-        horizontal: 24.0,
+      padding: EdgeInsets.symmetric(
+        horizontal: padding,
+        // horizontal: 1.0,
       ),
-      decoration: BoxDecoration(
-        color: UiKit.palette.textFieldBackground,
-        border: Border.all(color: UiKit.palette.textFieldBorder),
-        borderRadius: UiKit.constraints.textFieldRadius,
-      ),
+      decoration: includeDecoration
+          ? BoxDecoration(
+              color: UiKit.palette.textFieldBackground,
+              border: Border.all(color: UiKit.palette.textFieldBorder),
+              borderRadius: UiKit.constraints.textFieldRadius,
+            )
+          : BoxDecoration(),
       child: TextFormField(
         controller: controller,
         cursorColor: UiKit.text.colorTextBody1,
         keyboardType: type,
         maxLines: 1,
         textCapitalization: textCapitalization,
+        readOnly: readOnly,
         decoration: InputDecoration(
           border: InputBorder.none,
           enabledBorder: InputBorder.none,
