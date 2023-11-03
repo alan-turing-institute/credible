@@ -103,7 +103,7 @@ class _ConfigPageState extends State<ConfigPage> {
                 : rootConfigModel.timestamp.toString(),
           )));
           // TODO: fix to reload ProfilePage so that DID is updated
-          Modular.to.pop(context);
+          Modular.to.pop();
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(
