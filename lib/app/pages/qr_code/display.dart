@@ -54,7 +54,7 @@ class _QrCodeDisplayPageState extends State<QrCodeDisplayPage> {
                   ),
                   const SizedBox(height: 4.0),
                   Text(
-                    widget.credentialModel.data['id'],
+                    widget.credentialModel.id,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.caption,
                   ),

@@ -73,48 +73,12 @@ class QRCodeBloc extends Bloc<QRCodeEvent, QRCodeState> {
       // Decode JSON string
       final qrcodeJson = jsonDecode(event.data);
 
-      // Handle TinyVP case
+      // Check for TinyVP case
       try {
-        print('1: --------------------------------------------------------');
-        print(qrcodeJson);
-        print('--------------------------------------------------------');
         assert(qrcodeJson.contains('type'));
         final type = qrcodeJson['type'];
-        switch (type) {
-          case Constants.tinyVP:
-            assert(qrcodeJson.contains('data'));
-            // TODO: move to proper place.
-            // Deserialize presentation:
-            print(
-                '2: --------------------------------------------------------');
-            print(qrcodeJson);
-            print('--------------------------------------------------------');
-            final tinyVP = qrcodeJson['data'];
-            final gzipped = base64.decode(tinyVP);
-            final utf8_encoded = gzip.decode(gzipped);
-            final presentation = utf8.decode(utf8_encoded);
-            // TODO: check holder field
-            final did = jsonDecode(presentation)['holder'];
-            final opts = jsonEncode(await ffi_config_instance.get_ffi_config());
-            try {
-              await trustchain_ffi.vpVerifyPresentation(
-                  presentation: presentation, opts: opts);
-              print(presentation);
-              // TODO: create new page to display verification outcome & attributes.
-              print('--------------------------------------------------------');
-              print('--------------------------------------------------------');
-              print('verified TINY VP!');
-              yield QRCodeStateMessage(
-                  StateMessage.success('VERIFIED TINY VP!'));
-              print('--------------------------------------------------------');
-              print('--------------------------------------------------------');
-            } on FfiException {
-              yield QRCodeStateMessage(
-                  StateMessage.error('Failed verification of $did'));
-            }
-            break;
-          default:
-            throw FormatException('Invalid type: $type');
+        if (type == Constants.tinyVP) {
+          handleTinyVp(qrcodeJson);
         }
       } catch (err) {
         final String did = qrcodeJson['did'];
@@ -189,5 +153,46 @@ class QRCodeBloc extends Bloc<QRCodeEvent, QRCodeState> {
     }
 
     yield QRCodeStateWorking();
+  }
+}
+
+Stream<void> handleTinyVp(qrcodeJson) async* {
+  print('1: --------------------------------------------------------');
+  print(qrcodeJson);
+  print('--------------------------------------------------------');
+  // assert(qrcodeJson.contains('type'));
+  // final type = qrcodeJson['type'];
+  // switch (type) {
+  //   case Constants.tinyVP:
+  assert(qrcodeJson.contains('data'));
+  // TODO: move to proper place.
+  // Deserialize presentation:
+  print('2: --------------------------------------------------------');
+  print(qrcodeJson);
+  print('--------------------------------------------------------');
+  final tinyVP = qrcodeJson['data'];
+  final gzipped = base64.decode(tinyVP);
+  final utf8_encoded = gzip.decode(gzipped);
+  final presentation = utf8.decode(utf8_encoded);
+  // TODO: check holder field
+  final did = jsonDecode(presentation)['holder'];
+  final opts = jsonEncode(await ffi_config_instance.get_ffi_config());
+  try {
+    await trustchain_ffi.vpVerifyPresentation(
+        presentation: presentation, opts: opts);
+    print(presentation);
+    // TODO: create new page to display verification outcome & attributes.
+    print('--------------------------------------------------------');
+    print('--------------------------------------------------------');
+    print('verified TINY VP!');
+    yield QRCodeStateMessage(StateMessage.success('VERIFIED TINY VP!'));
+    print('--------------------------------------------------------');
+    print('--------------------------------------------------------');
+  } on FfiException {
+    yield QRCodeStateMessage(StateMessage.error('Failed verification of $did'));
+    //   }
+    //   break;
+    // default:
+    //   throw FormatException('Invalid type: $type');
   }
 }
