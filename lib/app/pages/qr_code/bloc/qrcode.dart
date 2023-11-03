@@ -75,7 +75,7 @@ class QRCodeBloc extends Bloc<QRCodeEvent, QRCodeState> {
 
       // Check for TinyVP case
       try {
-        assert(qrcodeJson.contains('type'));
+        assert(qrcodeJson.containsKey('type'));
         final type = qrcodeJson['type'];
         if (type == Constants.tinyVP) {
           handleTinyVp(qrcodeJson);
