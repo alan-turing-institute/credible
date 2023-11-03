@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:canonical_json/canonical_json.dart';
 import 'package:credible/app/interop/trustchain/trustchain.dart';
 import 'package:credible/app/pages/credentials/blocs/scan.dart';
 import 'package:credible/app/shared/config.dart';
@@ -78,7 +79,27 @@ class QRCodeBloc extends Bloc<QRCodeEvent, QRCodeState> {
         assert(qrcodeJson.containsKey('type'));
         final type = qrcodeJson['type'];
         if (type == Constants.tinyVP) {
-          handleTinyVp(qrcodeJson);
+          assert(qrcodeJson.containsKey('data'));
+          // TODO: move to proper place.
+          // Deserialize presentation:
+          final tinyVP = qrcodeJson['data'];
+          final gzipped = base64.decode(tinyVP);
+          final bytes = gzip.decode(gzipped);
+          final presentation = canonicalJson.decode(bytes);
+          // TODO: check holder field
+          final did = jsonDecode(presentation.toString())['holder'];
+          final opts = jsonEncode(await ffi_config_instance.get_ffi_config());
+          try {
+            await trustchain_ffi.vpVerifyPresentation(
+                presentation: presentation.toString(), opts: opts);
+            print(presentation);
+            // TODO: create new page to display verification outcome & attributes.
+            print('verified TINY VP!');
+            yield QRCodeStateMessage(StateMessage.success('VERIFIED TINY VP!'));
+          } on FfiException {
+            yield QRCodeStateMessage(
+                StateMessage.error('Failed verification of $did'));
+          }
         }
       } catch (err) {
         final String did = qrcodeJson['did'];
@@ -151,7 +172,6 @@ class QRCodeBloc extends Bloc<QRCodeEvent, QRCodeState> {
         yield QRCodeStateUnknown();
         break;
     }
-
     yield QRCodeStateWorking();
   }
 }
