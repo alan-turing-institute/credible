@@ -9,17 +9,15 @@ import 'package:credible/app/pages/credentials/models/verification_state.dart';
 import 'package:credible/app/pages/credentials/widget/credential.dart';
 import 'package:credible/app/pages/credentials/widget/document.dart';
 import 'package:credible/app/shared/config.dart';
-import 'package:credible/app/shared/constants.dart';
 import 'package:credible/app/shared/ui/ui.dart';
 import 'package:credible/app/shared/widget/back_leading_button.dart';
-import 'package:credible/app/shared/widget/base/button.dart';
 import 'package:credible/app/shared/widget/base/page.dart';
 import 'package:credible/app/shared/widget/confirm_dialog.dart';
 import 'package:credible/app/shared/widget/text_field_dialog.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logging/logging.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -155,12 +153,10 @@ class _CredentialsDetailState
                     ),
                     child: Tooltip(
                       message: localizations.credentialDetailShowDidTooltip,
-                      child: Text(
-                        localizations.credentialDetailShowDid,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).primaryColor),
-                        textAlign: TextAlign.center,
+                      child: Icon(
+                        CupertinoIcons.doc_text,
+                        color: UiKit.palette.credentialBackground,
+                        size: 40,
                       ),
                     ),
                   ),
@@ -179,12 +175,10 @@ class _CredentialsDetailState
                     ),
                     child: Tooltip(
                       message: localizations.credentialDetailShowChainTooltip,
-                      child: Text(
-                        localizations.credentialDetailShowChain,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).primaryColor),
-                        textAlign: TextAlign.center,
+                      child: Icon(
+                        CupertinoIcons.link,
+                        color: UiKit.palette.credentialBackground,
+                        size: 40,
                       ),
                     ),
                   ),
@@ -200,12 +194,10 @@ class _CredentialsDetailState
                     ),
                     child: Tooltip(
                       message: localizations.credentialDetailShareTooltip,
-                      child: Text(
-                        localizations.credentialDetailShare,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).primaryColor),
-                        textAlign: TextAlign.center,
+                      child: Icon(
+                        CupertinoIcons.share_up,
+                        color: UiKit.palette.credentialBackground,
+                        size: 40,
                       ),
                     ),
                   ),

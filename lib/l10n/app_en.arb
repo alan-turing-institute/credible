@@ -120,7 +120,7 @@
   "credentialDetailListTitle": "My wallet",
   "communicationHostAllow": "Allow",
   "communicationHostDeny": "Deny",
-  "communicationVerifiedHostAllow": "Continue",
+  "communicationVerifiedHostAllow": "Accept",
   "communicationVerifiedHostDeny": "Cancel",
   "scanTitle": "Scan",
   "scanPromptHost": "Do you trust this host?",
@@ -175,5 +175,9 @@
   "trustchainEndpoint": "Trustchain endpoint:",
   "rootEventDate": "Root event date:",
   "setRootEventDate": "Set root event date",
-  "changeRootEventDate": "Change root event date"
+  "changeRootEventDate": "Change root event date",
+  "publishDID": "Publish DID",
+  "publishDIDSubtitle": "Do you wish to publish your did:ion DID?",
+  "publishDIDYes": "Ok",
+  "publishDIDNo": "Cancel"
 }
