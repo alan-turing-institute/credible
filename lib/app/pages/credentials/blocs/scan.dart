@@ -11,7 +11,7 @@ import 'package:credible/app/shared/constants.dart';
 import 'package:credible/app/shared/model/message.dart';
 import 'package:credible/app/interop/trustchain/trustchain.dart';
 import 'package:dio/dio.dart';
-import 'package:dio_logging_interceptor/dio_logging_interceptor.dart' as diolog;
+// import 'package:dio_logging_interceptor/dio_logging_interceptor.dart' as diolog;
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
 import 'package:logging/logging.dart';
@@ -157,12 +157,12 @@ class ScanBloc extends Bloc<ScanEvent, ScanState> {
       //     DIDKitProvider.instance.keyToDID(Constants.defaultDIDMethod, key);
       final did = await ffi_config_instance.get_did();
       // Add logging for http request
-      client.interceptors.add(
-        diolog.DioLoggingInterceptor(
-          level: diolog.Level.body,
-          compact: false,
-        ),
-      );
+      // client.interceptors.add(
+      //   diolog.DioLoggingInterceptor(
+      //     level: diolog.Level.body,
+      //     compact: false,
+      //   ),
+      // );
       final credential = await client.post(url,
           // Send POST as "form data", currently fails with our backend
           // data: FormData.fromMap(<String, dynamic>{'subject_id': did}));

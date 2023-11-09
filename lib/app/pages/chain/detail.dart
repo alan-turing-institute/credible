@@ -64,7 +64,7 @@ class _DIDChainDisplayPageState extends State<DIDChainDisplayPage> {
                 } else if (snapshot.hasError) {
                   message = 'Chain resolution failed';
                   if (snapshot.error is DioError) {
-                    message = (snapshot.error as DioError).message;
+                    message = (snapshot.error as DioError).message!;
                   }
                   return CustomErrorWidget(errorMessage: message);
                 } else {
