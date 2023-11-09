@@ -1,12 +1,13 @@
 import 'dart:collection';
+import 'dart:math';
 
 // typedef AttributeModel = MapEntry<String, String>;
 
-class AttributeModel implements MapEntry<String, String> {
+class AttributeModel implements MapEntry<String, String?> {
   @override
   final String key;
   @override
-  final String value;
+  final String? value;
 
   const AttributeModel(this.key, this.value);
 
@@ -74,7 +75,8 @@ class AttributesModel {
   // the AtributesModel is constructed using fromMap(), because nested structure
   // is represented by concatenated keys (plus separators).
   // Throws StateError if there is no attribute with matching key.
-  String _getValue(String key, String prefix) {
+  // Throws runtime exception if the value is null.
+  String? _getValue(String key, String prefix) {
     return attributes
         .firstWhere((attrModel) => attrModel.key == prefix + key)
         .value;
@@ -97,5 +99,19 @@ class AttributesModel {
 
   HashMap<String, dynamic> toMap() {
     return _toMap('');
+  }
+
+  // Constructs a new AttributesModel with all values masked (null) except
+  // those at the selected indices.
+  AttributesModel mask(Set<int> selection) {
+    var list = List<AttributeModel>.from(attributes, growable: false);
+    if (selection.reduce(min) < 0 || selection.reduce(max) >= list.length) {
+      throw ArgumentError('Selection out of range');
+    }
+    var indices = [for (var i = 0; i < list.length; i++) i];
+    for (var index in indices.toSet().difference(selection)) {
+      list[index] = AttributeModel(list[index].key, null);
+    }
+    return AttributesModel._(list, sep);
   }
 }

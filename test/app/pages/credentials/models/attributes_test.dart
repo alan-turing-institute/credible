@@ -80,5 +80,16 @@ void main() {
       var result = model.toMap();
       expect(result, equals(attributesExample));
     });
+
+    test('.mask() sets all except selected values to null', () {
+      final model = AttributesModel.fromMap(attributesExample, sep: '|');
+      var selection = {0, 1, 3, 4, 6};
+      var result = model.mask(selection);
+
+      var expectedMap = attributesExample;
+      expectedMap['familyName'] = null;
+      expectedMap['degree']['type'] = null;
+      expect(result.toMap(), equals(expectedMap));
+    });
   });
 }
