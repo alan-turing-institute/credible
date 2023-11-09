@@ -1,3 +1,4 @@
+import 'package:credible/app/pages/attributes/models/attributes.dart';
 import 'package:credible/app/pages/credentials/models/credential_status.dart';
 import 'package:credible/app/shared/globals.dart';
 import 'package:uuid/uuid.dart';
@@ -52,4 +53,8 @@ class CredentialModel {
 
   Map<String, dynamic> toMap() =>
       {'id': id, 'alias': alias, 'image': image, 'data': data};
+
+  AttributesModel subjectAttributes() {
+    return AttributesModel.fromMap(data['credentialSubject']);
+  }
 }
