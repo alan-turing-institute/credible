@@ -4,3 +4,6 @@
 [submodule "deps/ssi"]
 	path = deps/ssi
 	url = git@github.com:spruceid/ssi.git
+[submodule "deps/trustchain"]
+	path = deps/trustchain
+	url = https://github.com/alan-turing-institute/trustchain.git
