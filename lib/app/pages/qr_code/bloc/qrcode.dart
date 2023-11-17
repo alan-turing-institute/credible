@@ -9,7 +9,10 @@ import 'package:credible/app/shared/config.dart';
 import 'package:credible/app/shared/constants.dart';
 import 'package:credible/app/shared/globals.dart';
 import 'package:credible/app/shared/model/message.dart';
+import 'package:credible/app/shared/widget/info_dialog.dart';
+import 'package:credible/app/shared/widget/json_info_dialog.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
 import 'package:logging/logging.dart';
 
@@ -36,6 +39,11 @@ class QRCodeStateHost extends QRCodeState {
   final bool verified;
 
   QRCodeStateHost(this.uri, this.verified);
+}
+
+class QRCodeStateSuccessTinyVP extends QRCodeState {
+  final String presentation;
+  QRCodeStateSuccessTinyVP(this.presentation);
 }
 
 class QRCodeStateSuccess extends QRCodeState {
@@ -73,7 +81,9 @@ class QRCodeBloc extends Bloc<QRCodeEvent, QRCodeState> {
     try {
       // Decode JSON string
       final qrcodeJson = jsonDecode(event.data);
-
+      // final pres_mock =
+      //     '''{"type":"TinyVP","data":"H4sIAAAAAAAAA6VVXXOiSBR9n1+Rcl6jofkUn1bxCzUq0ZjoZotqoJVWaEx3gyFT+e8LSiIms1O7s1VUid3nnnv7ntOXyo9vV1dPlT/ciHD0wp8qjas/s5V8zed8zxo3N4fDoXaQahHd3IgCqN+4FHmIcAwDdpOAp0oG/+v6yMLTPSozLBDFawydAE0pYlkM5Dgi5YjkA2F8sOYMPwqGr3X9l8quv0ZI2DviEy94L74o5usBLo9QLvBMbLII1AUgtSnOzsJG2EWEoc+858JmsbNFLj+fMd/GXv7/qeJhr7FDaeNVvd3txFufLEekfwvCg1sfrJKHoX/gjztjDJnWXSydJhgBGj/Kjv5vCjrny1HkqAQMME9PqVsUc8z8M1OO2mQUxCYwRCfQABJ0iVjDEAdpCdIKos2GXYIwYzEmG9uNYsJpkfB+eAlyMOW+7UFeEAFdqVcFrQq0SxzcIBsTO0WQshypKp93T0w5IN/Peb7m2QfQLRKNIuLlpiyDvMiNw0wwm8Shg048oiQrqlbXy7jM1TgX1nY/Gvkzug8Y9LzsnZWR11d5Jwrw2/H37d02eeNO2U/eyCRrcMR4o4Pbs44YdG5VhSxp53mRWBPFkJi79HcJGIar12dhJuBVOB6ugfVezIkQEhe1P9osCqJUBaAqSHMgNxQhe2p1SVMAEHRxdY7c0yhaX7r2/bI8VTqux+AMuXtRUXdghjeZvWKKsjt5Yc0jxzSm+4gVgZAxRHMn3iLuR14ZfJoMLizv/s8+fAePB4Po3eHsGfY786nW5gK5H5kecnoP/eZ4ofemQm853RqgWS4lu71Zv7xfN0zTJF1alcO2h0JolA58p+fiCR50719NMN4xPDIGWzcMBHO7d8zQFMfGwMvW8Hhr4Um48p3+OFhbtZrTnT1I91YcI6g838EBfxlVm4K9MLS0J93PnkHVngO/iqIk2tB2d7qWjO2caIn8MFFkfW0H7eiAvbv9Y2sNLV2eOPKml1iF4XK7vZ0G8Sd9L9T1REUBelnW+idjXIoacz8fdm4x7d+Rv1L0d6be998dk/+gKNDmQG0oYkNWa5IsAFmS1HrpCvxUz1Xnbm7NTGaG4xQ+ZtoFDC+3S8EMBHbS1VRXYZe54kKv1Zjekgew158RPkKDVE9iPukuFWqlavIitFxxUKVDK9pBmIZ9a1LV11aT1k1qRL1FG/F1UzaWE1WltlCn+zhIfcKk1uaoZqGjHwVeeWT83ufk21vlb80unFAZCAAA"}''';
+      // final qrcodeJson = jsonDecode(pres_mock);
       // Check for TinyVP case
       try {
         assert(qrcodeJson.containsKey('type'));
@@ -85,21 +95,26 @@ class QRCodeBloc extends Bloc<QRCodeEvent, QRCodeState> {
           final tinyVP = qrcodeJson['data'];
           final gzipped = base64.decode(tinyVP);
           final bytes = gzip.decode(gzipped);
-          final presentation = canonicalJson.decode(bytes);
-          // TODO: check holder field
-          final did = jsonDecode(presentation.toString())['holder'];
-          final opts = jsonEncode(await ffi_config_instance.get_ffi_config());
-          try {
-            await trustchain_ffi.vpVerifyPresentation(
-                presentation: presentation.toString(), opts: opts);
-            print(presentation);
-            // TODO: create new page to display verification outcome & attributes.
-            print('verified TINY VP!');
-            yield QRCodeStateMessage(StateMessage.success('VERIFIED TINY VP!'));
-          } on FfiException {
-            yield QRCodeStateMessage(
-                StateMessage.error('Failed verification of $did'));
-          }
+          final presentation = canonicalJson.decode(bytes).toString();
+
+          // // TODO: check holder field
+          // final did = jsonDecode(presentation.toString())['holder'];
+          // final opts = jsonEncode(await ffi_config_instance.get_ffi_config());
+
+          // Modulear
+          yield QRCodeStateSuccessTinyVP(presentation);
+
+          // try {
+          //   await trustchain_ffi.vpVerifyPresentation(
+          //       presentation: presentation.toString(), opts: opts);
+          //   print(presentation);
+          //   // TODO: create new page to display verification outcome & attributes.
+          //   print('verified TINY VP!');
+          //   yield QRCodeStateMessage(StateMessage.success('VERIFIED TINY VP!'));
+          // } on FfiException {
+          //   yield QRCodeStateMessage(
+          //       StateMessage.error('Failed verification of $did'));
+          // }
         }
       } catch (err) {
         final String did = qrcodeJson['did'];
@@ -194,6 +209,8 @@ Stream<void> handleTinyVp(qrcodeJson) async* {
   final gzipped = base64.decode(tinyVP);
   final utf8_encoded = gzip.decode(gzipped);
   final presentation = utf8.decode(utf8_encoded);
+  // TODO: pass presentation to PresentationViewer.
+
   // TODO: check holder field
   final did = jsonDecode(presentation)['holder'];
   final opts = jsonEncode(await ffi_config_instance.get_ffi_config());
@@ -209,7 +226,8 @@ Stream<void> handleTinyVp(qrcodeJson) async* {
     print('--------------------------------------------------------');
     print('--------------------------------------------------------');
   } on FfiException {
-    yield QRCodeStateMessage(StateMessage.error('Failed verification of $did'));
+    yield QRCodeStateMessage(
+        StateMessage.error('Failed verification of VP from holder $did'));
     //   }
     //   break;
     // default:

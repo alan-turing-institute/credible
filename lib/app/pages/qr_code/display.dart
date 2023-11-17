@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'dart:developer';
 import 'package:credible/app/pages/credentials/models/credential.dart';
 import 'package:credible/app/shared/ui/ui.dart';
 import 'package:credible/app/shared/widget/back_leading_button.dart';
@@ -35,6 +38,9 @@ class _QrCodeDisplayPageState extends State<QrCodeDisplayPage> {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
+    log("--TINYVP--");
+    log(tinyVP);
+    log("--TINYVP--");
     return BasePage(
       title: ' ',
       titleLeading: BackLeadingButton(),
