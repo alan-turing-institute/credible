@@ -30,6 +30,8 @@ class CredentialModel {
     return stripContext(data);
   }
 
+  bool get redactable => false;
+
   const CredentialModel({
     required this.id,
     required this.alias,

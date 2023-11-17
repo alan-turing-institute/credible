@@ -194,10 +194,17 @@ class _CredentialsDetailState
                 child: Container(
                   width: 130,
                   child: GestureDetector(
-                    onTap: () => Modular.to.pushNamed(
-                      '/qr-code/display',
-                      arguments: [widget.item.id, widget.item.id],
-                    ),
+                    onTap: () => widget.item.redactable
+                        ? Modular.to.pushNamed('/attributes/pick', arguments: [
+                            widget.item.subjectAttributes(),
+                            widget.item.id
+                          ])
+                        : Modular.to.pushNamed('/qr-code/display',
+                            arguments: [widget.item.id, widget.item.id]),
+                    // onTap: () => Modular.to.pushNamed(
+                    //   '/qr-code/display',
+                    //   arguments: [widget.item.id, widget.item.id],
+                    // ),
                     child: Tooltip(
                       message: localizations.credentialDetailShareTooltip,
                       child: Text(

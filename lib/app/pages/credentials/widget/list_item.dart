@@ -1,3 +1,4 @@
+import 'package:credible/app/pages/attributes/models/attributes.dart';
 import 'package:credible/app/pages/credentials/models/credential.dart';
 import 'package:credible/app/pages/credentials/models/credential_status.dart';
 import 'package:credible/app/shared/ui/ui.dart';
@@ -227,6 +228,54 @@ class CredentialsListItem extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+            ),
+          ],
+        ),
+      );
+}
+
+class AttributesListItem extends StatelessWidget {
+  final AttributeModel item;
+  final VoidCallback? onTap;
+  final bool? selected;
+
+  AttributesListItem({
+    Key? key,
+    required this.item,
+    this.onTap,
+    this.selected,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => _BaseItem(
+        child: Row(
+          children: <Widget>[
+            Container(
+              padding: const EdgeInsets.all(10.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+              child: HeroFix(
+                // tag: 'credential/${item.id}/icon',
+                tag: item.key, // TODO.
+                child: selected == null
+                    ? SizedBox(
+                        //placeholder, only show box in select mode
+                        width: 0,
+                        height: 0,
+                      )
+                    : selected!
+                        ? Icon(
+                            Icons.check_box,
+                            size: 24.0,
+                            color: UiKit.palette.credentialText,
+                          )
+                        : Icon(
+                            Icons.check_box_outline_blank,
+                            size: 24.0,
+                            color: UiKit.palette.credentialText,
+                          ),
               ),
             ),
           ],
