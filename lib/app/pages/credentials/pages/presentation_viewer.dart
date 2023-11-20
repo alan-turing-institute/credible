@@ -1,34 +1,24 @@
 import 'dart:convert';
-
-import 'package:credible/app/interop/didkit/didkit.dart';
 import 'package:credible/app/interop/trustchain/trustchain.dart';
 import 'package:credible/app/pages/credentials/blocs/wallet.dart';
-import 'package:credible/app/pages/credentials/models/credential.dart';
-import 'package:credible/app/pages/credentials/models/credential_display.dart';
 import 'package:credible/app/pages/credentials/models/verification_state.dart';
-import 'package:credible/app/pages/credentials/widget/credential.dart';
-import 'package:credible/app/pages/credentials/widget/document.dart';
 import 'package:credible/app/shared/config.dart';
-import 'package:credible/app/shared/constants.dart';
 import 'package:credible/app/shared/ui/ui.dart';
-import 'package:credible/app/shared/widget/back_leading_button.dart';
-import 'package:credible/app/shared/widget/base/button.dart';
+import 'package:credible/app/shared/widget/base/box_decoration.dart';
 import 'package:credible/app/shared/widget/base/page.dart';
-import 'package:credible/app/shared/widget/confirm_dialog.dart';
-import 'package:credible/app/shared/widget/text_field_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_json_viewer/flutter_json_viewer.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logging/logging.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PresentationViewer extends StatefulWidget {
-  final String item;
+  final String presentation;
 
-  const PresentationViewer({Key? key, required this.item}) : super(key: key);
+  const PresentationViewer({Key? key, required this.presentation})
+      : super(key: key);
 
   @override
   _PresentationViewerState createState() => _PresentationViewerState();
@@ -49,51 +39,21 @@ class _PresentationViewerState
   }
 
   void verify() async {
-    print(widget.item);
-    final json = jsonDecode(widget.item);
+    final json = jsonDecode(widget.presentation);
     assert(json.containsKey('holder'));
     final opts = jsonEncode(await ffi_config_instance.get_ffi_config());
     try {
       await trustchain_ffi.vpVerifyPresentation(
-          presentation: widget.item, opts: opts);
-      // print(widget.item);
-      // TODO: create new page to display verification outcome & attributes.
-      print('--------------------------------------------------------');
-      print('--------------------------------------------------------');
-      print('verified TINY VP!');
-      // yield QRCodeStateMessage(StateMessage.success('VERIFIED TINY VP!'));
-      print('--------------------------------------------------------');
-      print('--------------------------------------------------------');
+          presentation: widget.presentation, opts: opts);
       setState(() {
         verification = VerificationState.Verified;
       });
     } on FfiException catch (err) {
-      // yield QRCodeStateMessage(
-      //     StateMessage.error('Failed verification of VP from holder $did'));
       print(err);
       setState(() {
         verification = VerificationState.VerifiedWithError;
       });
     }
-
-    // final vcStr = jsonEncode(widget.item.data);
-    // // Modify FFI config as required
-    // final ffiConfig = await ffi_config_instance.get_ffi_config();
-    // print(jsonEncode(ffiConfig));
-    // // final optStr = jsonEncode({'proofPurpose': 'assertionMethod'});
-    // try {
-    //   await trustchain_ffi.vcVerifyCredential(
-    //       credential: vcStr, opts: jsonEncode(ffiConfig));
-    //   setState(() {
-    //     verification = VerificationState.Verified;
-    //   });
-    // } on FfiException catch (err) {
-    //   // TODO [#39]: Handle specific error cases
-    //   print(err);
-    //   setState(() {
-    //     verification = VerificationState.VerifiedWithError;
-    //   });
-    // }
   }
 
   IconButton handleBackButton() {
@@ -166,6 +126,26 @@ class _PresentationViewerState
             ),
           ],
           const SizedBox(height: 64.0),
+          Container(
+            decoration: BaseBoxDecoration(
+              color: Colors.white.withOpacity(0.8),
+              value: 0.0,
+              shapeSize: 256.0,
+              anchors: <Alignment>[
+                Alignment.topRight,
+                Alignment.bottomCenter,
+              ],
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(0.0, 12.0, 8.0, 12.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [JsonViewer(jsonDecode(widget.presentation))],
+              ),
+            ),
+          ),
         ],
       ),
     );

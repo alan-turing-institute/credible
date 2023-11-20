@@ -86,7 +86,7 @@ class AppModule extends Module {
         ),
         ChildRoute(
           '/qr-code/scan/presentation_viewer',
-          child: (context, args) => PresentationViewer(item: args.data),
+          child: (context, args) => PresentationViewer(presentation: args.data),
           transition: TransitionType.fadeIn,
         ),
         ChildRoute(
