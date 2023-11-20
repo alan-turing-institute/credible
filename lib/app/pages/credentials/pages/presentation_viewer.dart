@@ -16,6 +16,7 @@ import 'package:credible/app/shared/widget/base/button.dart';
 import 'package:credible/app/shared/widget/base/page.dart';
 import 'package:credible/app/shared/widget/confirm_dialog.dart';
 import 'package:credible/app/shared/widget/text_field_dialog.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_json_viewer/flutter_json_viewer.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -27,10 +28,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class PresentationViewer extends StatefulWidget {
   final String item;
 
-  const PresentationViewer({
-    Key? key,
-    required this.item,
-  }) : super(key: key);
+  const PresentationViewer({Key? key, required this.item}) : super(key: key);
 
   @override
   _PresentationViewerState createState() => _PresentationViewerState();
@@ -52,10 +50,8 @@ class _PresentationViewerState
 
   void verify() async {
     print(widget.item);
-    // 'a';
     final json = jsonDecode(widget.item);
     assert(json.containsKey('holder'));
-    // final did = json['holder'];
     final opts = jsonEncode(await ffi_config_instance.get_ffi_config());
     try {
       await trustchain_ffi.vpVerifyPresentation(
@@ -100,23 +96,32 @@ class _PresentationViewerState
     // }
   }
 
+  IconButton handleBackButton() {
+    return IconButton(
+      onPressed: () {
+        if (kDebugMode) {
+          // Emulator: go to list
+          Modular.to.pushReplacementNamed('/credentials/list');
+        } else {
+          // Release mode: return to scanner
+          Modular.to.pushReplacementNamed('/qr-code/scan');
+        }
+      },
+      icon: Icon(
+        Icons.arrow_back,
+        color: UiKit.palette.icon,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: Add proper localization
     final localizations = AppLocalizations.of(context)!;
 
     return BasePage(
-      // title: widget.item.alias ?? widget.item.id,
-      // titleTag: 'credential/${widget.item.alias ?? widget.item.id}/issuer',
-      titleTag: 'TODO',
-      titleLeading: BackLeadingButton(),
-      titleTrailing: IconButton(
-        onPressed: verify,
-        icon: Icon(
-          Icons.edit,
-          color: UiKit.palette.icon,
-        ),
-      ),
+      title: 'Presentation',
+      titleLeading: handleBackButton(),
       navigation: Container(
         color: UiKit.palette.navBarBackground,
         child: Padding(
