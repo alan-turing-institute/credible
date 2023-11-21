@@ -175,5 +175,11 @@
   "trustchainEndpoint": "Trustchain endpoint:",
   "rootEventDate": "Root event date:",
   "setRootEventDate": "Set root event date",
-  "changeRootEventDate": "Change root event date"
+  "changeRootEventDate": "Change root event date",
+  "presentationSuccessTitle": "Successful presentation",
+  "presentationSuccessSubtitle": "Presentation was successfully presented",
+  "presentationSuccessButton": "Ok",
+  "presentationFailTitle": "Failed presentation",
+  "presentationFailSubtitle": "Presentation was successfully presented",
+  "presentationFailButton": "Ok"
 }

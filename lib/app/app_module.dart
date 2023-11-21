@@ -13,6 +13,8 @@ import 'package:credible/app/pages/splash.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
+import 'pages/credentials/pages/presentation_viewer.dart';
+
 class AppModule extends Module {
   @override
   List<Bind> get binds => [
@@ -78,9 +80,13 @@ class AppModule extends Module {
         ChildRoute(
           '/qr-code/display',
           child: (context, args) => QrCodeDisplayPage(
-            name: args.data[0],
-            data: args.data[1],
+            credentialModel: args.data[0],
           ),
+          transition: TransitionType.fadeIn,
+        ),
+        ChildRoute(
+          '/qr-code/scan/presentation_viewer',
+          child: (context, args) => PresentationViewer(presentation: args.data),
           transition: TransitionType.fadeIn,
         ),
         ChildRoute(

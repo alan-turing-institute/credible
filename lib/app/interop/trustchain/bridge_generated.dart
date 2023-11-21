@@ -42,6 +42,12 @@ abstract class TrustchainFfi {
 
   FlutterRustBridgeTaskConstMeta get kVpIssuePresentationConstMeta;
 
+  /// Verifies a verifiable presentation.
+  Future<void> vpVerifyPresentation(
+      {required String presentation, required String opts, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kVpVerifyPresentationConstMeta;
+
   /// Makes a new ION DID from a mnemonic.
   Future<String> createOperationMnemonic(
       {required String mnemonic, dynamic hint});
@@ -156,6 +162,26 @@ class TrustchainFfiImpl implements TrustchainFfi {
         argNames: ["presentation", "opts", "jwkJson"],
       );
 
+  Future<void> vpVerifyPresentation(
+      {required String presentation, required String opts, dynamic hint}) {
+    var arg0 = _platform.api2wire_String(presentation);
+    var arg1 = _platform.api2wire_String(opts);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) =>
+          _platform.inner.wire_vp_verify_presentation(port_, arg0, arg1),
+      parseSuccessData: _wire2api_unit,
+      constMeta: kVpVerifyPresentationConstMeta,
+      argValues: [presentation, opts],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kVpVerifyPresentationConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "vp_verify_presentation",
+        argNames: ["presentation", "opts"],
+      );
+
   Future<String> createOperationMnemonic(
       {required String mnemonic, dynamic hint}) {
     var arg0 = _platform.api2wire_String(mnemonic);
@@ -190,6 +216,10 @@ class TrustchainFfiImpl implements TrustchainFfi {
 
   Uint8List _wire2api_uint_8_list(dynamic raw) {
     return raw as Uint8List;
+  }
+
+  void _wire2api_unit(dynamic raw) {
+    return;
   }
 }
 
@@ -417,6 +447,27 @@ class TrustchainFfiWire implements FlutterRustBridgeWireBase {
       _wire_vp_issue_presentationPtr.asFunction<
           void Function(int, ffi.Pointer<wire_uint_8_list>,
               ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
+
+  void wire_vp_verify_presentation(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> presentation,
+    ffi.Pointer<wire_uint_8_list> opts,
+  ) {
+    return _wire_vp_verify_presentation(
+      port_,
+      presentation,
+      opts,
+    );
+  }
+
+  late final _wire_vp_verify_presentationPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>)>>('wire_vp_verify_presentation');
+  late final _wire_vp_verify_presentation =
+      _wire_vp_verify_presentationPtr.asFunction<
+          void Function(int, ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>)>();
 
   void wire_create_operation_mnemonic(
     int port_,

@@ -200,7 +200,7 @@ class _CredentialsDetailState
                             widget.item.id
                           ])
                         : Modular.to.pushNamed('/qr-code/display',
-                            arguments: [widget.item.id, widget.item.id]),
+                            arguments: [widget.item]),
                     // onTap: () => Modular.to.pushNamed(
                     //   '/qr-code/display',
                     //   arguments: [widget.item.id, widget.item.id],
