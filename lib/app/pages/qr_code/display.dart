@@ -1,3 +1,7 @@
+import 'dart:developer';
+
+import 'dart:developer';
+import 'package:credible/app/pages/credentials/models/credential.dart';
 import 'package:credible/app/shared/ui/ui.dart';
 import 'package:credible/app/shared/widget/back_leading_button.dart';
 import 'package:credible/app/shared/widget/base/page.dart';
@@ -5,19 +9,38 @@ import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class QrCodeDisplayPage extends StatelessWidget {
-  final String name;
-  final String data;
+class QrCodeDisplayPage extends StatefulWidget {
+  final CredentialModel credentialModel;
 
-  const QrCodeDisplayPage({
-    Key? key,
-    required this.name,
-    required this.data,
-  }) : super(key: key);
+  QrCodeDisplayPage({Key? key, required this.credentialModel})
+      : super(key: key);
+
+  @override
+  State<QrCodeDisplayPage> createState() => _QrCodeDisplayPageState();
+}
+
+class _QrCodeDisplayPageState extends State<QrCodeDisplayPage> {
+  String tinyVP = '';
+
+  @override
+  void initState() {
+    super.initState();
+    setTinyVP();
+  }
+
+  void setTinyVP() async {
+    final _tinyVP = await widget.credentialModel.asTinyVp();
+    setState(() {
+      tinyVP = _tinyVP;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
+    log("--TINYVP--");
+    log(tinyVP);
+    log("--TINYVP--");
     return BasePage(
       title: ' ',
       titleLeading: BackLeadingButton(),
@@ -37,7 +60,7 @@ class QrCodeDisplayPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 4.0),
                   Text(
-                    name,
+                    widget.credentialModel.id,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.caption,
                   ),
@@ -45,10 +68,10 @@ class QrCodeDisplayPage extends StatelessWidget {
                     alignment: Alignment.center,
                     padding: const EdgeInsets.all(32.0),
                     child: QrImage(
-                      data: data,
-                      version: QrVersions.auto,
-                      foregroundColor: UiKit.palette.icon,
-                    ),
+                        data: tinyVP,
+                        version: QrVersions.auto,
+                        foregroundColor: Colors.black // UiKit.palette.icon,
+                        ),
                   ),
                 ],
               ),

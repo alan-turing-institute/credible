@@ -126,6 +126,14 @@ class _QrCodeScanPageState extends ModularState<QrCodeScanPage, QRCodeBloc> {
             arguments: state.uri,
           );
         }
+        if (state is QRCodeStateSuccessTinyVP) {
+          qrController.stopCamera();
+
+          Modular.to.pushReplacementNamed(
+            '/qr-code/scan/presentation_viewer',
+            arguments: state.presentation,
+          );
+        }
       },
       child: BasePage(
         padding: EdgeInsets.zero,
