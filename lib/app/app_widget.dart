@@ -79,7 +79,7 @@ class _AppWidgetState extends State<AppWidget> {
     Modular.setInitialRoute('/splash');
 
     return MaterialApp.router(
-      title: 'Credible',
+      title: 'Trustchain',
       theme: _themeData,
       routeInformationParser: Modular.routeInformationParser,
       routerDelegate: Modular.routerDelegate,
