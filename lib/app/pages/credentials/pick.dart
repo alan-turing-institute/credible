@@ -10,11 +10,13 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class CredentialsPickPage extends StatefulWidget {
   final List<CredentialModel> items;
   final void Function(List<CredentialModel>) onSubmit;
+  final void Function(CredentialModel) onSubmitSD;
 
   const CredentialsPickPage({
     Key? key,
     required this.items,
     required this.onSubmit,
+    required this.onSubmitSD,
   }) : super(key: key);
 
   @override
@@ -55,24 +57,55 @@ class _CredentialsPickPageState extends State<CredentialsPickPage> {
       navigation: SafeArea(
         child: Container(
           padding: const EdgeInsets.all(16.0),
-          height: kBottomNavigationBarHeight * 1.75,
-          child: Tooltip(
-            message: localizations.credentialPickPresent,
-            child: BaseButton.primary(
-              onPressed: () {
-                if (selection.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    backgroundColor: Colors.red,
-                    content: Text('localizations.credentialPickSelect'),
-                  ));
-                } else {
-                  widget
-                      .onSubmit(selection.map((i) => widget.items[i]).toList());
-                  Modular.to.pushReplacementNamed('/credentials/list');
-                }
-              },
-              child: Text(localizations.credentialPickPresent),
-            ),
+          height: kBottomNavigationBarHeight * 3.5,
+          child: Column(
+            children: [
+              Tooltip(
+                message: localizations.credentialPickPresent,
+                child: BaseButton.primary(
+                  onPressed: () {
+                    if (selection.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        backgroundColor: Colors.red,
+                        content: Text('localizations.credentialPickSelect'),
+                      ));
+                    } else {
+                      widget.onSubmit(
+                          selection.map((i) => widget.items[i]).toList());
+                      Modular.to.pushReplacementNamed('/credentials/list');
+                    }
+                  },
+                  child: Text(localizations.credentialPickPresent),
+                ),
+              ),
+              SizedBox(height: 16.0),
+              Tooltip(
+                message: 'messaage',
+                child: BaseButton.primary(
+                  onPressed: () {
+                    if (selection.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        backgroundColor: Colors.red,
+                        content:
+                            Text('Select a credential to selectivly disclose.'),
+                      ));
+                    } else if (selection.length > 1) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        backgroundColor: Colors.red,
+                        content: Text(
+                            'Select only *one* credential for selective disclosure'),
+                      ));
+                    } else {
+                      // widget.onSubmitSD(
+                      // selection.map((i) => widget.items[i]).toList());
+                      // Modular.to.pushReplacementNamed('/credentials/list');
+                      widget.onSubmitSD(widget.items[selection.first]);
+                    }
+                  },
+                  child: Text('Present with selective disclosure'),
+                ),
+              ),
+            ],
           ),
         ),
       ),

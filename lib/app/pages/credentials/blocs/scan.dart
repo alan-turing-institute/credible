@@ -39,6 +39,7 @@ class ScanEventCredentialOffer extends ScanEvent {
 }
 
 class ScanEventVerifiablePresentationRequest extends ScanEvent {
+  final bool selectiveDisclosure;
   final String url;
   final String key;
   final List<CredentialModel> credentials;
@@ -46,6 +47,7 @@ class ScanEventVerifiablePresentationRequest extends ScanEvent {
   final String? domain;
 
   ScanEventVerifiablePresentationRequest({
+    required this.selectiveDisclosure,
     required this.url,
     required this.key,
     required this.credentials,

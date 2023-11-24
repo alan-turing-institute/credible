@@ -45,8 +45,8 @@ class AttributesModel {
         throw ArgumentError(
             'attribute key must not contain separator character');
       }
-      if (m[k] is String) {
-        list.add(AttributeModel(prefix + k, m[k]));
+      if (!(m[k] is Map)) {
+        list.add(AttributeModel(prefix + k, m[k].toString()));
       } else {
         list = _append(m[k], prefix + k + sep, list, sep);
       }
