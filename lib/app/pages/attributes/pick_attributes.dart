@@ -65,7 +65,7 @@ class _AttributesPickPageState extends State<AttributesPickPage> {
                 if (selection.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     backgroundColor: Colors.red,
-                    content: Text('localizations.credentialPickSelect'),
+                    content: Text(localizations.credentialPickFieldsSelect),
                   ));
                 } else {
                   widget.onSubmit(widget.items.mask(selection));

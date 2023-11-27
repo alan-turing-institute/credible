@@ -195,10 +195,39 @@ class _CredentialsDetailState
                   width: 130,
                   child: GestureDetector(
                     onTap: () => widget.item.redactable
-                        ? Modular.to.pushNamed('/attributes/pick', arguments: [
-                            widget.item.subjectAttributes(),
-                            widget.item.id
-                          ])
+                        ? Modular.to
+                            .pushNamed('/credentials/pick_fields', arguments: {
+                            'selected_vc': widget.item,
+                            'onSubmit': (attributesModel) async {
+                              try {
+                                final ffi_config =
+                                    await ffi_config_instance.get_ffi_config();
+                                final att_map =
+                                    jsonEncode(attributesModel.toMap());
+                                final o_cred = jsonEncode(widget.item.data);
+                                final redactedCredentialStr =
+                                    await trustchain_ffi.vcRedact(
+                                        originalCredential: o_cred,
+                                        credentialSubjectMask: att_map,
+                                        opts: jsonEncode(ffi_config));
+                                // Selective disclosure currently supports only presenting a single credential.
+
+                                final redactedCredential =
+                                    CredentialModel.fromMap({
+                                  'data': jsonDecode(redactedCredentialStr)
+                                });
+
+                                await Modular.to.pushNamed('/qr-code/display',
+                                    arguments: [redactedCredential]);
+                              } on FfiException catch (e) {
+                                print(e);
+                                throw Exception(e);
+                              } catch (e) {
+                                print(e);
+                                throw Exception(e);
+                              }
+                            }
+                          })
                         : Modular.to.pushNamed('/qr-code/display',
                             arguments: [widget.item]),
                     // onTap: () => Modular.to.pushNamed(

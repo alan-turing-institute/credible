@@ -113,6 +113,7 @@
   "credentialPresentCancel": "Reject",
   "credentialPickPresent": "Present",
   "credentialPickSelect": "Choose one or more credentials from your wallet to present",
+  "credentialPickFieldsSelect": "Choose one or more attributes from your credential to present",
   "credentialReceiveTitle": "Credential Offer",
   "credentialReceiveHost": "wants to send you a credential",
   "credentialReceiveConfirm": "Add to wallet",
