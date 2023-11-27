@@ -43,8 +43,7 @@ class _AttributesPickPageState extends State<AttributesPickPage> {
       title: 'Select attributes',
       titleTrailing: IconButton(
         onPressed: () {
-          // TODO: is this correct?
-          Modular.to.pushReplacementNamed('/attributes/list');
+          Modular.to.pushReplacementNamed('/credentials/list');
         },
         icon: Icon(
           Icons.close,

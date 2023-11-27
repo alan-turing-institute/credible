@@ -77,10 +77,13 @@ class CredentialsModule extends Module {
               onSubmit: (preview) {
                 Modular.to
                     .pushReplacementNamed('/credentials/pick', arguments: {
+                  // Pass two arguements to the credentials/pick route.
+                  // Each arg is an 'onSubmit' lambda function.
+                  // One to be used in the standard case, the other in the selective disclosure case.
                   'present': (selection) {
                     Modular.get<ScanBloc>().add(
                       ScanEventVerifiablePresentationRequest(
-                        selectiveDisclosure: false,
+                        selectiveDisclosure: null,
                         url: args.data.toString(),
                         key: 'key',
                         credentials: selection,
@@ -93,10 +96,10 @@ class CredentialsModule extends Module {
                     Modular.to.pushReplacementNamed('/credentials/pick_fields',
                         arguments: {
                           'selected_vc': selection,
-                          'onSubmit': (idxs) {
+                          'onSubmit': (attributesModel) {
                             Modular.get<ScanBloc>().add(
                               ScanEventVerifiablePresentationRequest(
-                                selectiveDisclosure: idxs,
+                                selectiveDisclosure: attributesModel,
                                 url: args.data.toString(),
                                 key: 'key',
                                 credentials: [selection],

@@ -249,6 +249,7 @@ class AttributesListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _BaseItem(
+        onTap: onTap,
         child: Row(
           children: <Widget>[
             Container(
@@ -278,6 +279,26 @@ class AttributesListItem extends StatelessWidget {
                           ),
               ),
             ),
+            const SizedBox(width: 16.0),
+            Expanded(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                  ...List.generate(
+                    item.key.split('|').length,
+                    (index) => TooltipText(
+                      text: item.key.split('|')[index].replaceAll('_', ' ') +
+                          '\n',
+                      style: GoogleFonts.poppins(
+                        color: index == 0
+                            ? UiKit.palette.credentialDetail
+                            : UiKit.palette.credentialText,
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ]))
           ],
         ),
       );

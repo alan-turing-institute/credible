@@ -3,6 +3,7 @@ import 'dart:developer' as developer;
 import 'package:bloc/bloc.dart';
 import 'package:credible/app/interop/didkit/didkit.dart';
 import 'package:credible/app/interop/secure_storage/secure_storage.dart';
+import 'package:credible/app/pages/attributes/models/attributes.dart';
 import 'package:credible/app/pages/credentials/blocs/wallet.dart';
 import 'package:credible/app/pages/credentials/models/credential.dart';
 import 'package:credible/app/pages/credentials/repositories/credential.dart';
@@ -39,7 +40,7 @@ class ScanEventCredentialOffer extends ScanEvent {
 }
 
 class ScanEventVerifiablePresentationRequest extends ScanEvent {
-  final bool selectiveDisclosure;
+  final AttributesModel? selectiveDisclosure;
   final String url;
   final String key;
   final List<CredentialModel> credentials;
@@ -223,7 +224,36 @@ class ScanBloc extends Bloc<ScanEvent, ScanState> {
     final keyId = event.key;
     final challenge = event.challenge;
     final domain = event.domain;
-    final credentials = event.credentials;
+    var credentials = event.credentials;
+    final attributesModel = event.selectiveDisclosure;
+
+    if (attributesModel != null) {
+      try {
+        final ffi_config = await ffi_config_instance.get_ffi_config();
+        final att_map = jsonEncode(attributesModel.toMap());
+        final o_cred = jsonEncode(credentials[0].data);
+        final redactedCredential = await trustchain_ffi.vcRedact(
+            originalCredential: jsonEncode(credentials[0].data),
+            credentialSubjectMask: jsonEncode(attributesModel.toMap()),
+            opts: jsonEncode(ffi_config));
+        // Selective disclosure currently supports only presenting a single credential.
+        credentials = [
+          CredentialModel.fromMap({'data': jsonDecode(redactedCredential)})
+        ];
+      } on FfiException catch (e) {
+        log.severe(e);
+        yield ScanStateMessage(
+            StateMessage.error('Something went wrong, please try again later. '
+                'Check the logs for more information.'));
+        throw Exception(e);
+      } catch (e) {
+        log.severe('something went wrong', e);
+        yield ScanStateMessage(
+            StateMessage.error('Something went wrong, please try again later. '
+                'Check the logs for more information.'));
+        throw Exception(e);
+      }
+    }
 
     try {
       final key = (await SecureStorageProvider.instance.get(keyId))!;
