@@ -253,6 +253,7 @@ class AttributesListItem extends StatelessWidget {
         child: Row(
           children: <Widget>[
             Container(
+              height: 60,
               padding: const EdgeInsets.all(10.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16.0),
@@ -290,7 +291,7 @@ class AttributesListItem extends StatelessWidget {
                       text: item.key.split('|')[index].replaceAll('_', ' ') +
                           '\n',
                       style: GoogleFonts.poppins(
-                        color: index == 0
+                        color: index == 0 && item.key.split('|').length > 1
                             ? UiKit.palette.credentialDetail
                             : UiKit.palette.credentialText,
                         fontSize: 16.0,
