@@ -15,14 +15,14 @@ class _BaseItem extends StatefulWidget {
   final Widget child;
   final VoidCallback? onTap;
   final bool enabled;
-  final bool? selected;
+  final bool redactable;
 
   const _BaseItem({
     Key? key,
     required this.child,
     this.onTap,
     this.enabled = true,
-    this.selected,
+    this.redactable = false,
   }) : super(key: key);
 
   @override
@@ -66,7 +66,9 @@ class __BaseItemState extends State<_BaseItem>
           margin: const EdgeInsets.symmetric(vertical: 4.0),
           decoration: BaseBoxDecoration(
             color: UiKit.palette.credentialBackground,
-            shapeColor: UiKit.palette.credentialDetail.withOpacity(0.5),
+            shapeColor: widget.redactable
+                ? UiKit.palette.accent.withOpacity(0.3)
+                : UiKit.palette.credentialDetail.withOpacity(0.5),
             value: 1.0,
             anchors: <Alignment>[
               Alignment.bottomRight,
@@ -151,6 +153,7 @@ class CredentialsListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _BaseItem(
+        redactable: item.redactable,
         enabled: !(item.status != CredentialStatus.active),
         onTap: onTap ??
             () => Modular.to.pushNamed(

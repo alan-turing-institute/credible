@@ -67,7 +67,7 @@ class _CredentialsPickPageState extends State<CredentialsPickPage> {
                     if (selection.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         backgroundColor: Colors.red,
-                        content: Text('localizations.credentialPickSelect'),
+                        content: Text(localizations.credentialPickSelect),
                       ));
                     } else {
                       widget.onSubmit(
@@ -81,7 +81,16 @@ class _CredentialsPickPageState extends State<CredentialsPickPage> {
               SizedBox(height: 16.0),
               Tooltip(
                 message: 'messaage',
-                child: BaseButton.primary(
+                child: BaseButton(
+                  gradient: LinearGradient(
+                    begin: Alignment(0.7, 0.0),
+                    end: Alignment(1.3, 0.0),
+                    colors: [
+                      UiKit.palette.credentialBackground,
+                      UiKit.palette.accent.withOpacity(0.7)
+                    ],
+                  ),
+                  textColor: Colors.white,
                   onPressed: () {
                     if (selection.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -95,10 +104,13 @@ class _CredentialsPickPageState extends State<CredentialsPickPage> {
                         content: Text(
                             'Select only *one* credential for selective disclosure'),
                       ));
+                    } else if (!widget.items[selection.first].redactable) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        backgroundColor: Colors.red,
+                        content: Text(
+                            'Select a redactable credential with an RSS proof for selective disclosure'),
+                      ));
                     } else {
-                      // widget.onSubmitSD(
-                      // selection.map((i) => widget.items[i]).toList());
-                      // Modular.to.pushReplacementNamed('/credentials/list');
                       widget.onSubmitSD(widget.items[selection.first]);
                     }
                   },

@@ -8,6 +8,7 @@ class TrustchainPalette extends UiPalette {
 
   static const blue = Color.fromRGBO(0, 0, 68, 1.0);
   static const lightBlue = Color.fromRGBO(57, 45, 117, 1.0);
+  static const cyanBlue = Colors.cyan;
   static const orange = Color.fromRGBO(255, 125, 0, 1.0);
   static const light = Color.fromRGBO(247, 235, 255, 1.0);
 
@@ -24,8 +25,9 @@ class TrustchainPalette extends UiPalette {
   @override
   Color get primary => blue;
 
+  // To be used in place of credetialDetail if the credential is redactable (RSS)
   @override
-  Color get accent => blue;
+  Color get accent => cyanBlue;
 
   @override
   Color get background => Color(0xffF6F7F8);

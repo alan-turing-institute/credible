@@ -39,10 +39,13 @@ class CredentialModel {
     return stripContext(data);
   }
 
-  // bool get redactable => false;
-  // TODO: For testing, remove once integrated to get redactability from
-  // credential
-  bool get redactable => true;
+  bool get redactable {
+    final proof_type = data['proof']['type'];
+    if (proof_type == 'RSSSignature2023') {
+      return true;
+    }
+    return false;
+  }
 
   const CredentialModel({
     required this.id,
