@@ -5,6 +5,7 @@ import 'package:credible/app/pages/credentials/models/verification_state.dart';
 import 'package:credible/app/shared/config.dart';
 import 'package:credible/app/shared/ui/ui.dart';
 import 'package:credible/app/shared/widget/base/box_decoration.dart';
+import 'package:credible/app/shared/widget/base/button.dart';
 import 'package:credible/app/shared/widget/base/page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -125,7 +126,7 @@ class _PresentationViewerState
               ],
             ),
           ],
-          const SizedBox(height: 64.0),
+          const SizedBox(height: 32.0),
           Container(
             decoration: BaseBoxDecoration(
               color: Colors.white.withOpacity(0.8),
@@ -143,6 +144,26 @@ class _PresentationViewerState
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [JsonViewer(jsonDecode(widget.presentation))],
+              ),
+            ),
+          ),
+          const SizedBox(height: 32.0),
+          BaseButton.primary(
+            onPressed: () => Modular.to.pushNamed(
+              '/did/chain',
+              arguments: [
+                jsonDecode(widget.presentation)['verifiableCredential']
+                    ['issuer'],
+              ],
+            ),
+            child: Tooltip(
+              message: localizations.credentialDetailShowChainTooltip,
+              child: Text(
+                "Show attestation chain",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: UiKit.palette.credentialText),
+                textAlign: TextAlign.center,
               ),
             ),
           ),
