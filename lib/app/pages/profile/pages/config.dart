@@ -228,11 +228,10 @@ class _ConfigPageState extends State<ConfigPage> {
                             context: context,
                             builder: (BuildContext context) {
                               return ConfirmDialog(
-                                title: 'Publish DID',
-                                subtitle:
-                                    'Do you wish to publish your did:ion DID?',
-                                yes: 'Publish',
-                                no: 'Cancel',
+                                title: localizations.publishDID,
+                                subtitle: localizations.publishDIDSubtitle,
+                                yes: localizations.publishDIDYes,
+                                no: localizations.publishDIDNo,
                               );
                             },
                           );
