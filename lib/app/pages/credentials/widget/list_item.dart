@@ -256,7 +256,7 @@ class AttributesListItem extends StatelessWidget {
         child: Row(
           children: <Widget>[
             Container(
-              height: 60,
+              height: 50,
               padding: const EdgeInsets.all(10.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16.0),
@@ -295,7 +295,7 @@ class AttributesListItem extends StatelessWidget {
                           '\n',
                       style: GoogleFonts.poppins(
                         color: index == 0 && item.key.split('|').length > 1
-                            ? UiKit.palette.credentialDetail
+                            ? UiKit.palette.credentialText.withOpacity(0.6)
                             : UiKit.palette.credentialText,
                         fontSize: 16.0,
                         fontWeight: FontWeight.w600,
