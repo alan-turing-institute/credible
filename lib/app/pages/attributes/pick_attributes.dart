@@ -80,7 +80,7 @@ class _AttributesPickPageState extends State<AttributesPickPage> {
       body: Column(
         children: <Widget>[
           Text(
-            localizations.credentialPickSelect,
+            localizations.credentialPickFieldsSelect,
             style: Theme.of(context).textTheme.bodyText1,
           ),
           const SizedBox(height: 32.0),
