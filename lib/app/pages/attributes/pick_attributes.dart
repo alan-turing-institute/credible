@@ -69,7 +69,6 @@ class _AttributesPickPageState extends State<AttributesPickPage> {
                   ));
                 } else {
                   widget.onSubmit(widget.items.mask(selection));
-                  Modular.to.pushReplacementNamed('/credentials/list');
                 }
               },
               child: Text(localizations.credentialPickPresent),
