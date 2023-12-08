@@ -103,8 +103,7 @@ class _CredentialsReceivePageState
                     final alias = await showDialog<String>(
                       context: context,
                       builder: (context) => TextFieldDialog(
-                        title:
-                            'Do you want to give an alias to this credential?',
+                        title: 'Please enter a name for this credential.',
                       ),
                     );
 
