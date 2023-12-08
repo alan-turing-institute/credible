@@ -156,7 +156,7 @@ class _CredentialsDetailState
                       child: Icon(
                         CupertinoIcons.doc_text,
                         color: UiKit.palette.credentialBackground,
-                        size: 40,
+                        size: 32,
                       ),
                     ),
                   ),
@@ -178,7 +178,7 @@ class _CredentialsDetailState
                       child: Icon(
                         CupertinoIcons.link,
                         color: UiKit.palette.credentialBackground,
-                        size: 40,
+                        size: 32,
                       ),
                     ),
                   ),
@@ -186,7 +186,8 @@ class _CredentialsDetailState
               ),
               SafeArea(
                 child: Container(
-                  width: 130,
+                  padding: const EdgeInsets.symmetric(),
+                  width: 100,
                   child: GestureDetector(
                     onTap: () => widget.item.redactable
                         ? Modular.to
@@ -233,7 +234,7 @@ class _CredentialsDetailState
                       child: Icon(
                         CupertinoIcons.share_up,
                         color: UiKit.palette.credentialBackground,
-                        size: 40,
+                        size: 32,
                       ),
                     ),
                   ),
