@@ -80,8 +80,9 @@ class _CredentialsReceivePageState
                       child: Padding(
                         padding: const EdgeInsets.all(24.0),
                         child: TooltipText(
+                          softWrap: true,
                           text:
-                              '${widget.url.host} ${localizations.credentialReceiveHost}',
+                              '${widget.url.host}\n ${localizations.credentialReceiveHost}',
                           maxLines: 3,
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.bodyText1,
