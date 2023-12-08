@@ -80,8 +80,9 @@ class _CredentialsReceivePageState
                       child: Padding(
                         padding: const EdgeInsets.all(24.0),
                         child: TooltipText(
+                          softWrap: true,
                           text:
-                              '${widget.url.host} ${localizations.credentialReceiveHost}',
+                              '${widget.url.host}\n ${localizations.credentialReceiveHost}',
                           maxLines: 3,
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.bodyText1,
@@ -102,8 +103,7 @@ class _CredentialsReceivePageState
                     final alias = await showDialog<String>(
                       context: context,
                       builder: (context) => TextFieldDialog(
-                        title:
-                            'Do you want to give an alias to this credential?',
+                        title: 'Please enter a name for this credential.',
                       ),
                     );
 

@@ -17,7 +17,7 @@ class TextFieldDialog extends StatefulWidget {
       required this.title,
       this.subtitle,
       this.initialValue,
-      this.yes = 'Confirm',
+      this.yes = 'Ok',
       this.no = 'No'})
       : super(key: key);
 
@@ -69,23 +69,15 @@ class _TextFieldDialogState extends State<TextFieldDialog> {
                 child: BaseButton.transparent(
                   borderColor: UiKit.palette.primary,
                   onPressed: () {
-                    Modular.to.pop(controller.text);
+                    if (controller.text.isEmpty) {
+                      null;
+                    } else {
+                      Modular.to.pop(controller.text);
+                    }
                   },
                   child: Text(widget.yes),
                 ),
               ),
-              const SizedBox(width: 16.0),
-              Expanded(
-                child: BaseButton.primary(
-                  borderColor: UiKit.palette.primary,
-                  onPressed: () {
-                    Modular.to.pop();
-                  },
-                  child: Text(
-                    widget.no,
-                  ),
-                ),
-              )
             ],
           )
         ],

@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:credible/app/pages/attributes/models/attributes.dart';
+import 'package:credible/app/pages/attributes/pick_attributes.dart';
 import 'package:credible/app/pages/credentials/blocs/scan.dart';
 import 'package:credible/app/pages/credentials/pages/detail.dart';
 import 'package:credible/app/pages/credentials/pages/grid.dart';
@@ -71,11 +75,15 @@ class CredentialsModule extends Module {
               resource: 'credential',
               url: args.data,
               onSubmit: (preview) {
-                Modular.to.pushReplacementNamed(
-                  '/credentials/pick',
-                  arguments: (selection) {
+                Modular.to
+                    .pushReplacementNamed('/credentials/pick', arguments: {
+                  // Pass two arguements to the credentials/pick route.
+                  // Each arg is an 'onSubmit' lambda function.
+                  // One to be used in the standard case, the other in the selective disclosure case.
+                  'present': (selection) {
                     Modular.get<ScanBloc>().add(
                       ScanEventVerifiablePresentationRequest(
+                        selectiveDisclosure: null,
                         url: args.data.toString(),
                         key: 'key',
                         credentials: selection,
@@ -84,7 +92,25 @@ class CredentialsModule extends Module {
                       ),
                     );
                   },
-                );
+                  'presentSelectiveDisclosure': (selection) {
+                    Modular.to.pushReplacementNamed('/credentials/pick_fields',
+                        arguments: {
+                          'selected_vc': selection,
+                          'onSubmit': (attributesModel) {
+                            Modular.get<ScanBloc>().add(
+                              ScanEventVerifiablePresentationRequest(
+                                selectiveDisclosure: attributesModel,
+                                url: args.data.toString(),
+                                key: 'key',
+                                credentials: [selection],
+                                challenge: preview['challenge'],
+                                domain: preview['domain'],
+                              ),
+                            );
+                          }
+                        });
+                  }
+                });
               },
             );
           },
@@ -150,10 +176,20 @@ class CredentialsModule extends Module {
           child: (context, args) => CredentialsStream(
             child: (context, items) => CredentialsPickPage(
               items: items,
-              onSubmit: args.data,
+              // onSubmit: args.data,
+              onSubmit: args.data['present'],
+              onSubmitSD: args.data['presentSelectiveDisclosure'],
             ),
           ),
           transition: TransitionType.rightToLeftWithFade,
+        ),
+        ChildRoute(
+          '/pick_fields',
+          child: (context, args) => AttributesPickPage(
+            items: AttributesModel.fromMap(
+                args.data['selected_vc'].data['credentialSubject']),
+            onSubmit: args.data['onSubmit'],
+          ),
         ),
       ];
 }

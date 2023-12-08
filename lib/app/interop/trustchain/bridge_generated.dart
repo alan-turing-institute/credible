@@ -33,6 +33,16 @@ abstract class TrustchainFfi {
 
   FlutterRustBridgeTaskConstMeta get kVcVerifyCredentialConstMeta;
 
+  /// Generate a selectivley disclosed Credential with a new RSS proof derived from the original
+  /// credential and a masked copy of the credential subject.
+  Future<String> vcRedact(
+      {required String originalCredential,
+      required String credentialSubjectMask,
+      required String opts,
+      dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kVcRedactConstMeta;
+
   /// Issues a verifiable presentation. Analogous with [didkit](https://docs.rs/didkit/latest/didkit/c/fn.didkit_vc_issue_presentation.html).
   Future<String> vpIssuePresentation(
       {required String presentation,
@@ -136,6 +146,30 @@ class TrustchainFfiImpl implements TrustchainFfi {
       const FlutterRustBridgeTaskConstMeta(
         debugName: "vc_verify_credential",
         argNames: ["credential", "opts"],
+      );
+
+  Future<String> vcRedact(
+      {required String originalCredential,
+      required String credentialSubjectMask,
+      required String opts,
+      dynamic hint}) {
+    var arg0 = _platform.api2wire_String(originalCredential);
+    var arg1 = _platform.api2wire_String(credentialSubjectMask);
+    var arg2 = _platform.api2wire_String(opts);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) =>
+          _platform.inner.wire_vc_redact(port_, arg0, arg1, arg2),
+      parseSuccessData: _wire2api_String,
+      constMeta: kVcRedactConstMeta,
+      argValues: [originalCredential, credentialSubjectMask, opts],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kVcRedactConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "vc_redact",
+        argNames: ["originalCredential", "credentialSubjectMask", "opts"],
       );
 
   Future<String> vpIssuePresentation(
@@ -421,6 +455,31 @@ class TrustchainFfiWire implements FlutterRustBridgeWireBase {
       _wire_vc_verify_credentialPtr.asFunction<
           void Function(int, ffi.Pointer<wire_uint_8_list>,
               ffi.Pointer<wire_uint_8_list>)>();
+
+  void wire_vc_redact(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> original_credential,
+    ffi.Pointer<wire_uint_8_list> credential_subject_mask,
+    ffi.Pointer<wire_uint_8_list> opts,
+  ) {
+    return _wire_vc_redact(
+      port_,
+      original_credential,
+      credential_subject_mask,
+      opts,
+    );
+  }
+
+  late final _wire_vc_redactPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(
+              ffi.Int64,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>)>>('wire_vc_redact');
+  late final _wire_vc_redact = _wire_vc_redactPtr.asFunction<
+      void Function(int, ffi.Pointer<wire_uint_8_list>,
+          ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
 
   void wire_vp_issue_presentation(
     int port_,

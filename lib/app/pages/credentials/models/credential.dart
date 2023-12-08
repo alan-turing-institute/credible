@@ -1,3 +1,4 @@
+import 'package:credible/app/pages/attributes/models/attributes.dart';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:convert';
@@ -38,6 +39,14 @@ class CredentialModel {
     return stripContext(data);
   }
 
+  bool get redactable {
+    final proof_type = data['proof']['type'];
+    if (proof_type == 'RSSSignature2023') {
+      return true;
+    }
+    return false;
+  }
+
   const CredentialModel({
     required this.id,
     required this.alias,
@@ -52,7 +61,9 @@ class CredentialModel {
     assert(data.containsKey('issuer'));
 
     assert(data.containsKey('credentialSubject'));
-    assert(data['credentialSubject'].containsKey('id'));
+    // TODO: Is this check needed for TinyVP?
+    // Removed because it prevents VC issuance.
+    // assert(data['credentialSubject'].containsKey('id'));
 
     return CredentialModel(
       id: m['id'] ?? Uuid().v4(),
@@ -64,6 +75,10 @@ class CredentialModel {
 
   Map<String, dynamic> toMap() =>
       {'id': id, 'alias': alias, 'image': image, 'data': data};
+
+  AttributesModel subjectAttributes() {
+    return AttributesModel.fromMap(data['credentialSubject']);
+  }
 
   String subjectDid() {
     return data['credentialSubject']['id'];
@@ -82,6 +97,8 @@ class CredentialModel {
     final ffiConfig = await ffi_config_instance.get_ffi_config();
     // TODO: replace 'key' with constant
     final key = (await SecureStorageProvider.instance.get('key'))!;
+    final pres = asPresentation();
+
     final vp = await trustchain_ffi.vpIssuePresentation(
         presentation: asPresentation(),
         opts: jsonEncode(ffiConfig),

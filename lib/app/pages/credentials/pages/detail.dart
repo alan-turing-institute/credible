@@ -9,17 +9,15 @@ import 'package:credible/app/pages/credentials/models/verification_state.dart';
 import 'package:credible/app/pages/credentials/widget/credential.dart';
 import 'package:credible/app/pages/credentials/widget/document.dart';
 import 'package:credible/app/shared/config.dart';
-import 'package:credible/app/shared/constants.dart';
 import 'package:credible/app/shared/ui/ui.dart';
 import 'package:credible/app/shared/widget/back_leading_button.dart';
-import 'package:credible/app/shared/widget/base/button.dart';
 import 'package:credible/app/shared/widget/base/page.dart';
 import 'package:credible/app/shared/widget/confirm_dialog.dart';
 import 'package:credible/app/shared/widget/text_field_dialog.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logging/logging.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -155,12 +153,10 @@ class _CredentialsDetailState
                     ),
                     child: Tooltip(
                       message: localizations.credentialDetailShowDidTooltip,
-                      child: Text(
-                        localizations.credentialDetailShowDid,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).primaryColor),
-                        textAlign: TextAlign.center,
+                      child: Icon(
+                        CupertinoIcons.doc_text,
+                        color: UiKit.palette.credentialBackground,
+                        size: 32,
                       ),
                     ),
                   ),
@@ -179,12 +175,10 @@ class _CredentialsDetailState
                     ),
                     child: Tooltip(
                       message: localizations.credentialDetailShowChainTooltip,
-                      child: Text(
-                        localizations.credentialDetailShowChain,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).primaryColor),
-                        textAlign: TextAlign.center,
+                      child: Icon(
+                        CupertinoIcons.link,
+                        color: UiKit.palette.credentialBackground,
+                        size: 32,
                       ),
                     ),
                   ),
@@ -192,20 +186,55 @@ class _CredentialsDetailState
               ),
               SafeArea(
                 child: Container(
-                  width: 130,
+                  padding: const EdgeInsets.symmetric(),
+                  width: 100,
                   child: GestureDetector(
-                    onTap: () => Modular.to.pushNamed(
-                      '/qr-code/display',
-                      arguments: [widget.item],
-                    ),
+                    onTap: () => widget.item.redactable
+                        ? Modular.to
+                            .pushNamed('/credentials/pick_fields', arguments: {
+                            'selected_vc': widget.item,
+                            'onSubmit': (attributesModel) async {
+                              try {
+                                final ffi_config =
+                                    await ffi_config_instance.get_ffi_config();
+                                final att_map =
+                                    jsonEncode(attributesModel.toMap());
+                                final o_cred = jsonEncode(widget.item.data);
+                                final redactedCredentialStr =
+                                    await trustchain_ffi.vcRedact(
+                                        originalCredential: o_cred,
+                                        credentialSubjectMask: att_map,
+                                        opts: jsonEncode(ffi_config));
+                                // Selective disclosure currently supports only presenting a single credential.
+
+                                final redactedCredential =
+                                    CredentialModel.fromMap({
+                                  'data': jsonDecode(redactedCredentialStr)
+                                });
+
+                                await Modular.to.pushNamed('/qr-code/display',
+                                    arguments: [redactedCredential]);
+                              } on FfiException catch (e) {
+                                print(e);
+                                throw Exception(e);
+                              } catch (e) {
+                                print(e);
+                                throw Exception(e);
+                              }
+                            }
+                          })
+                        : Modular.to.pushNamed('/qr-code/display',
+                            arguments: [widget.item]),
+                    // onTap: () => Modular.to.pushNamed(
+                    //   '/qr-code/display',
+                    //   arguments: [widget.item.id, widget.item.id],
+                    // ),
                     child: Tooltip(
                       message: localizations.credentialDetailShareTooltip,
-                      child: Text(
-                        localizations.credentialDetailShare,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).primaryColor),
-                        textAlign: TextAlign.center,
+                      child: Icon(
+                        CupertinoIcons.share_up,
+                        color: UiKit.palette.credentialBackground,
+                        size: 32,
                       ),
                     ),
                   ),

@@ -1,0 +1,13 @@
+{
+    "degree" : {
+        "college" : "University of Oxbridge",
+        "name" : "Bachelor of Arts",
+        "type" : "BachelorDegree",
+        "fellowships" : {
+            "royalSociety" : "junior",
+            "nationalMuseum" : "associate" 
+        }
+    },
+    "familyName" : "Bloggs",
+    "givenName" : "Jane"
+}

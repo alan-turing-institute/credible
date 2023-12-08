@@ -1,3 +1,4 @@
+import 'package:credible/app/pages/attributes/models/attributes.dart';
 import 'package:credible/app/pages/credentials/models/credential.dart';
 import 'package:credible/app/pages/credentials/models/credential_status.dart';
 import 'package:credible/app/shared/ui/ui.dart';
@@ -14,14 +15,14 @@ class _BaseItem extends StatefulWidget {
   final Widget child;
   final VoidCallback? onTap;
   final bool enabled;
-  final bool? selected;
+  final bool redactable;
 
   const _BaseItem({
     Key? key,
     required this.child,
     this.onTap,
     this.enabled = true,
-    this.selected,
+    this.redactable = false,
   }) : super(key: key);
 
   @override
@@ -65,7 +66,9 @@ class __BaseItemState extends State<_BaseItem>
           margin: const EdgeInsets.symmetric(vertical: 4.0),
           decoration: BaseBoxDecoration(
             color: UiKit.palette.credentialBackground,
-            shapeColor: UiKit.palette.credentialDetail.withOpacity(0.5),
+            shapeColor: widget.redactable
+                ? UiKit.palette.accent.withOpacity(0.3)
+                : UiKit.palette.credentialDetail.withOpacity(0.5),
             value: 1.0,
             anchors: <Alignment>[
               Alignment.bottomRight,
@@ -150,6 +153,7 @@ class CredentialsListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _BaseItem(
+        redactable: item.redactable,
         enabled: !(item.status != CredentialStatus.active),
         onTap: onTap ??
             () => Modular.to.pushNamed(
@@ -229,6 +233,76 @@ class CredentialsListItem extends StatelessWidget {
                 ],
               ),
             ),
+          ],
+        ),
+      );
+}
+
+class AttributesListItem extends StatelessWidget {
+  final AttributeModel item;
+  final VoidCallback? onTap;
+  final bool? selected;
+
+  AttributesListItem({
+    Key? key,
+    required this.item,
+    this.onTap,
+    this.selected,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => _BaseItem(
+        onTap: onTap,
+        child: Row(
+          children: <Widget>[
+            Container(
+              height: 50,
+              padding: const EdgeInsets.all(10.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+              child: HeroFix(
+                // tag: 'credential/${item.id}/icon',
+                tag: item.key, // TODO.
+                child: selected == null
+                    ? SizedBox(
+                        //placeholder, only show box in select mode
+                        width: 0,
+                        height: 0,
+                      )
+                    : selected!
+                        ? Icon(
+                            Icons.check_box,
+                            size: 24.0,
+                            color: UiKit.palette.credentialText,
+                          )
+                        : Icon(
+                            Icons.check_box_outline_blank,
+                            size: 24.0,
+                            color: UiKit.palette.credentialText,
+                          ),
+              ),
+            ),
+            const SizedBox(width: 16.0),
+            Expanded(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                  ...List.generate(
+                    item.key.split('|').length,
+                    (index) => TooltipText(
+                      text: item.key.split('|')[index].replaceAll('_', ' ') +
+                          '\n',
+                      style: GoogleFonts.poppins(
+                        color: index == 0 && item.key.split('|').length > 1
+                            ? UiKit.palette.credentialText.withOpacity(0.6)
+                            : UiKit.palette.credentialText,
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ]))
           ],
         ),
       );

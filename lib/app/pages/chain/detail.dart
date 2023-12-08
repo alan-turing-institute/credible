@@ -51,7 +51,6 @@ class _DIDChainDisplayPageState extends State<DIDChainDisplayPage> {
         scrollView: false,
         body: Container(
           alignment: Alignment.center,
-          padding: const EdgeInsets.all(8.0),
           child: FutureBuilder<ChainAndDate>(
               future: chain_and_date(widget.did),
               builder:

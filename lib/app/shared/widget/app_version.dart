@@ -15,7 +15,7 @@ class AppVersion extends StatelessWidget {
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.done:
-            final appName = snapshot.data?.appName ?? 'Credible';
+            final appName = snapshot.data?.appName ?? 'Trustchain';
             final version = snapshot.data?.version ?? '0.1.0';
             final buildNumber = snapshot.data?.buildNumber ?? '1';
 
