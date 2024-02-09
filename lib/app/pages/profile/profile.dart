@@ -6,6 +6,7 @@ import 'package:credible/app/pages/profile/blocs/did.dart';
 import 'package:credible/app/pages/profile/blocs/profile.dart';
 import 'package:credible/app/pages/profile/models/config.dart';
 import 'package:credible/app/pages/profile/models/profile.dart';
+import 'package:credible/app/pages/profile/widgets/animated_menu_item.dart';
 import 'package:credible/app/pages/profile/widgets/did_display.dart';
 import 'package:credible/app/pages/profile/widgets/menu_item.dart';
 import 'package:credible/app/shared/widget/app_version.dart';
@@ -36,6 +37,12 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
+    // TODO: Load config state and get whether root event date is set
+    // final config_state = Modular.get<ConfigBloc>().state;
+    // var config_model =
+    //     config_state is ConfigStateDefault ? config_state.model : ConfigModel();
+    // final _rootEventDateIsSet = config_model.rootEventDate.isNotEmpty;
+    final _rootEventDateIsSet = true;
     return BlocConsumer(
       bloc: Modular.get<ProfileBloc>(),
       listener: (context, state) {
@@ -86,11 +93,18 @@ class _ProfilePageState extends State<ProfilePage> {
                 onTap: () =>
                     Modular.to.pushNamed('/profile/personal', arguments: model),
               ),
-              MenuItem(
-                icon: Icons.settings,
-                title: localizations.configTitle,
-                onTap: () => Modular.to.pushNamed('/profile/config'),
-              ),
+
+              _rootEventDateIsSet
+                  ? MenuItem(
+                      icon: Icons.settings,
+                      title: localizations.configTitle,
+                      onTap: () => Modular.to.pushNamed('/profile/config'),
+                    )
+                  : AnimatedMenuItem(
+                      icon: AnimatedIcons.event_add,
+                      title: localizations.configTitle,
+                      onTap: () => Modular.to.pushNamed('/profile/config'),
+                    ),
               MenuItem(
                 icon: Icons.shield,
                 title: localizations.privacyTitle,
