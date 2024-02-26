@@ -72,6 +72,15 @@ String? extractEndpoint(dynamic did_document, String service_id) {
   return null;
 }
 
+String? extractServiceType(dynamic did_document, String service_id) {
+  for (var service in did_document['service']) {
+    if (service['id'] == service_id) {
+      return service['type'];
+    }
+  }
+  return null;
+}
+
 int? parseIntOrNull(s) {
   try {
     return (int.parse(s));

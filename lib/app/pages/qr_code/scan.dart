@@ -10,6 +10,9 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+// Types of DID services supported via QR codes.
+enum ServiceType { CredentialEndpoint, WebUrl }
+
 class QrCodeScanPage extends StatefulWidget {
   @override
   _QrCodeScanPageState createState() => _QrCodeScanPageState();
@@ -51,6 +54,59 @@ class _QrCodeScanPageState extends ModularState<QrCodeScanPage, QRCodeBloc> {
       controller.pauseCamera();
       store.add(QRCodeEventHost(scanData.code ?? ''));
     });
+  }
+
+  void handleService(Uri uri, bool verified, ServiceType type) async {
+    switch (type) {
+      case ServiceType.CredentialEndpoint:
+        return promptHost(uri, verified);
+      case ServiceType.WebUrl:
+        return promptWebUrl(uri, verified);
+    }
+  }
+
+  void promptWebUrl(Uri uri, bool verified) async {
+    // TODO (copied from promptHost).
+    // Here we want to prompt the user with a dialog box containing the URI as
+    // a link that can be clicked to open the web page in a browser.
+
+    if (!promptActive) {
+      setState(() {
+        promptActive = true;
+      });
+
+      final localizations = AppLocalizations.of(context)!;
+      final acceptHost = await showDialog<bool>(
+            context: context,
+            builder: (BuildContext context) {
+              return ConfirmDialog(
+                title: verified
+                    ? localizations.scanPromptVerifiedHost
+                    : localizations.scanPromptHost,
+                subtitle: uri.host,
+                yes: verified
+                    ? localizations.communicationVerifiedHostAllow
+                    : localizations.communicationHostAllow,
+                no: verified
+                    ? localizations.communicationVerifiedHostDeny
+                    : localizations.communicationHostDeny,
+              );
+            },
+          ) ??
+          false;
+
+      if (acceptHost) {
+        store.add(QRCodeEventAccept(uri));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(localizations.scanRefuseHost),
+        ));
+      }
+
+      setState(() {
+        promptActive = false;
+      });
+    }
   }
 
   void promptHost(Uri uri, bool verified) async {
@@ -107,6 +163,9 @@ class _QrCodeScanPageState extends ModularState<QrCodeScanPage, QRCodeBloc> {
             backgroundColor: state.message.color,
             content: Text(state.message.message),
           ));
+        }
+        if (state is QRCodeStateService) {
+          handleService(state.uri, state.verified, state.type);
         }
         if (state is QRCodeStateHost) {
           promptHost(state.uri, state.verified);
