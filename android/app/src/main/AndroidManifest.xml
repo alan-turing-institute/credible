@@ -33,4 +33,10 @@
                 android:name="flutterEmbedding"
                 android:value="2"/>
     </application>
+    <queries>
+        <!-- To allow the application to check for inAppBrowserView launch mode support -->
+        <intent>
+            <action android:name="android.support.customtabs.action.CustomTabsService" />
+        </intent>
+    </queries>
 </manifest>

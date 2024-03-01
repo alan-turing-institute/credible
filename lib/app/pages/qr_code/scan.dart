@@ -3,12 +3,15 @@ import 'dart:io';
 import 'package:credible/app/pages/qr_code/bloc/qrcode.dart';
 import 'package:credible/app/shared/widget/base/page.dart';
 import 'package:credible/app/shared/widget/confirm_dialog.dart';
+import 'package:credible/app/shared/widget/info_dialog.dart';
 import 'package:credible/app/shared/widget/navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:logging/logging.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // Types of DID services supported via QR codes.
 enum ServiceType { CredentialEndpoint, WebUrl }
@@ -24,6 +27,8 @@ class _QrCodeScanPageState extends ModularState<QrCodeScanPage, QRCodeBloc> {
 
   late bool flash;
   bool promptActive = false;
+
+  final _log = Logger('credible/scan_page');
 
   @override
   void initState() {
@@ -65,47 +70,66 @@ class _QrCodeScanPageState extends ModularState<QrCodeScanPage, QRCodeBloc> {
     }
   }
 
-  void promptWebUrl(Uri uri, bool verified) async {
-    // TODO (copied from promptHost).
-    // Here we want to prompt the user with a dialog box containing the URI as
-    // a link that can be clicked to open the web page in a browser.
+  // Launch a uri in the in-app browser.
+  Future<bool> _launchURL(Uri uri) async {
+    // // Temp URL for testing/demo purposes:
+    // uri = Uri.parse('https://www.justpark.com/');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
 
+      // Wait until the browser closes
+      // (see https://github.com/flutter/flutter/issues/57536)
+      await Future.delayed(Duration(milliseconds: 100));
+      while (
+          WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) {
+        await Future.delayed(Duration(milliseconds: 100));
+      }
+      // await closeInAppWebView();
+      return true;
+    } else {
+      _log.severe('cannot launch url: $uri');
+      return false;
+    }
+  }
+
+  // Prompt the user with a dialog box containing the URI and the option
+  // to open the web page in a browser.
+  void promptWebUrl(Uri uri, bool verified) async {
     if (!promptActive) {
       setState(() {
         promptActive = true;
       });
 
       final localizations = AppLocalizations.of(context)!;
-      final acceptHost = await showDialog<bool>(
+
+      if (!verified) {
+        await showDialog<bool>(
             context: context,
             builder: (BuildContext context) {
-              return ConfirmDialog(
-                title: verified
-                    ? localizations.scanPromptVerifiedHost
-                    : localizations.scanPromptHost,
+              return InfoDialog(
+                title:
+                    'Unverified URL - AVOID!', // TODO. localizations.scanPromptUnverifiedUrl,
                 subtitle: uri.host,
-                yes: verified
-                    ? localizations.communicationVerifiedHostAllow
-                    : localizations.communicationHostAllow,
-                no: verified
-                    ? localizations.communicationVerifiedHostDeny
-                    : localizations.communicationHostDeny,
               );
-            },
-          ) ??
-          false;
-
-      if (acceptHost) {
-        store.add(QRCodeEventAccept(uri));
+            });
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(localizations.scanRefuseHost),
-        ));
-      }
+        final acceptUrl = await showDialog<bool>(
+                context: context,
+                builder: (BuildContext context) {
+                  return ConfirmDialog(
+                      title:
+                          'Verified URL ✓', // localizations.scanPromptVerifiedUrl // TODO make this a clickable link
+                      subtitle: uri.host,
+                      yes: 'Open',
+                      no: 'Cancel');
+                }) ??
+            false;
 
-      setState(() {
-        promptActive = false;
-      });
+        if (acceptUrl) {
+          await _launchURL(uri);
+        }
+        await Modular.to.pushReplacementNamed('/credentials/list');
+      }
     }
   }
 
@@ -165,10 +189,10 @@ class _QrCodeScanPageState extends ModularState<QrCodeScanPage, QRCodeBloc> {
           ));
         }
         if (state is QRCodeStateService) {
+          // qrController.pauseCamera();
           handleService(state.uri, state.verified, state.type);
-        }
-        if (state is QRCodeStateHost) {
-          promptHost(state.uri, state.verified);
+          // qrController.resumeCamera();
+          // Modular.to.pushReplacementNamed('/credentials/list');
         }
         if (state is QRCodeStateUnknown) {
           qrController.resumeCamera();
