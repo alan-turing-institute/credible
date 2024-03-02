@@ -7,7 +7,11 @@ class FFIConfig {
   Future<int> get_root_event_time() async {
     final rootEventTime = (await SecureStorageProvider.instance
         .get(ConfigModel.rootEventTimeKey))!;
-    return int.parse(rootEventTime);
+    try {
+      return int.parse(rootEventTime);
+    } on FormatException catch (e) {
+      throw StateError('Please set the root event date on the Settings page.');
+    }
   }
 
   Future<String> get_trustchain_endpoint() async {

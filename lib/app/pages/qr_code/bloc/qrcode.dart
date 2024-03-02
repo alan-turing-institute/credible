@@ -93,13 +93,10 @@ class QRCodeBloc extends Bloc<QRCodeEvent, QRCodeState> {
         yield await handleService(qrcodeJson);
       }
     } catch (e) {
-      print(e);
+      // print(e);
       yield QRCodeStateMessage(StateMessage.error(
           // TODO: improve errors/error messages.
-          // e.g. if root event date is not set the message is currently:
-          // FormatException: invalid radix 10 number at: <YOUR_ROOT_EVENT_TIME>.
-          // This is thrown when we call get_ffi_config inside handle_service.
-          // Must also handle the case that the root event date is set but the
+          // In particular, handle the case that the root event date is set but the
           // Trustchain endpoint (server) is unreachable.
           e.toString())); // TODO: use localizations
     }
