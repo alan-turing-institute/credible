@@ -93,16 +93,13 @@ class QRCodeBloc extends Bloc<QRCodeEvent, QRCodeState> {
         yield await handleService(qrcodeJson);
       }
     } on DioError catch (e) {
-      yield QRCodeStateMessage(StateMessage.error(
-          // Trustchain endpoint (server) is unreachable.
-          '''Failed to reach the Trustchain endpoint.
+      yield QRCodeStateMessage(
+          StateMessage.error('''Failed to reach the Trustchain endpoint.
           \n\nPlease check your network connection.
           \n\nThe server may be offline. Please try again later.'''));
     } catch (e) {
       yield QRCodeStateMessage(StateMessage.error(
-          // TODO: improve errors/error messages.
-          // In particular, handle the case that the root event date is set but the
-          // Trustchain endpoint (server) is unreachable.
+          // Print user-friendly error message (omitting Error type).
           e.toString().replaceAll(RegExp('^[^:]*:'), '').trimLeft()));
     }
   }
