@@ -46,8 +46,8 @@ class FFIConfig {
           trustchainEndpointUri.port;
       return ffiConfig;
     } catch (e) {
-      throw StateError('''Invalid Trustchain endpoint:\n\n$trustchainEndpoint\n
-          Please update on the Settings page.''');
+      throw StateError('''Invalid Trustchain endpoint:\n\n$trustchainEndpoint
+      \nPlease update on the Settings page.''');
     }
   }
 }
