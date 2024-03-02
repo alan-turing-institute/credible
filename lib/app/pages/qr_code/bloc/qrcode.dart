@@ -93,12 +93,11 @@ class QRCodeBloc extends Bloc<QRCodeEvent, QRCodeState> {
         yield await handleService(qrcodeJson);
       }
     } catch (e) {
-      // print(e);
       yield QRCodeStateMessage(StateMessage.error(
           // TODO: improve errors/error messages.
           // In particular, handle the case that the root event date is set but the
           // Trustchain endpoint (server) is unreachable.
-          e.toString())); // TODO: use localizations
+          e.toString().replaceAll(RegExp('^[^:]*:'), '').trimLeft()));
     }
   }
 

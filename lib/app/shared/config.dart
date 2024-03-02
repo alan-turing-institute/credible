@@ -9,7 +9,7 @@ class FFIConfig {
         .get(ConfigModel.rootEventTimeKey))!;
     try {
       return int.parse(rootEventTime);
-    } on FormatException catch (e) {
+    } on FormatException {
       throw StateError('Please set the root event date on the Settings page.');
     }
   }
@@ -35,15 +35,20 @@ class FFIConfig {
     ffiConfig['trustchainOptions']!['rootEventTime'] =
         await get_root_event_time();
     final trustchainEndpoint = await get_trustchain_endpoint();
-    final trustchainEndpointUri = Uri.parse(trustchainEndpoint);
-    // Ensure scheme is HTTP or HTTPS
-    assert(trustchainEndpointUri.isScheme('HTTP') ||
-        trustchainEndpointUri.isScheme('HTTPS'));
-    ffiConfig['endpointOptions']!['trustchainEndpoint']!['host'] =
-        trustchainEndpointUri.scheme + '://' + trustchainEndpointUri.host;
-    ffiConfig['endpointOptions']!['trustchainEndpoint']!['port'] =
-        trustchainEndpointUri.port;
-    return ffiConfig;
+    try {
+      final trustchainEndpointUri = Uri.parse(trustchainEndpoint);
+      // Ensure scheme is HTTP or HTTPS
+      assert(trustchainEndpointUri.isScheme('HTTP') ||
+          trustchainEndpointUri.isScheme('HTTPS'));
+      ffiConfig['endpointOptions']!['trustchainEndpoint']!['host'] =
+          trustchainEndpointUri.scheme + '://' + trustchainEndpointUri.host;
+      ffiConfig['endpointOptions']!['trustchainEndpoint']!['port'] =
+          trustchainEndpointUri.port;
+      return ffiConfig;
+    } catch (e) {
+      throw StateError('''Invalid Trustchain endpoint:\n\n$trustchainEndpoint\n
+          Please update on the Settings page.''');
+    }
   }
 }
 

@@ -358,6 +358,12 @@ class _ConfigPageState extends State<ConfigPage> {
         rootConfigModel.timestamp = rootTimestamp.timestamp;
         print('State updated!');
       });
+    } else {
+      // If it was already set, unset everything.
+      rootConfigModel.confimationCode = null;
+      rootConfigModel.root = null;
+      rootConfigModel.timestamp = null;
+      print('State updated!');
     }
 
     // Update the widget state.
