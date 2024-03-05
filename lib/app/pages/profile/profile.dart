@@ -11,11 +11,9 @@ import 'package:credible/app/pages/profile/widgets/did_display.dart';
 import 'package:credible/app/pages/profile/widgets/menu_item.dart';
 import 'package:credible/app/shared/widget/app_version.dart';
 import 'package:credible/app/shared/widget/base/page.dart';
-import 'package:credible/app/shared/widget/base/button.dart';
 import 'package:credible/app/shared/widget/confirm_dialog.dart';
 import 'package:credible/app/shared/widget/navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -37,12 +35,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-    // TODO: Load config state and get whether root event date is set
-    // final config_state = Modular.get<ConfigBloc>().state;
-    // var config_model =
-    //     config_state is ConfigStateDefault ? config_state.model : ConfigModel();
-    // final _rootEventDateIsSet = config_model.rootEventDate.isNotEmpty;
-    final _rootEventDateIsSet = true;
+
     return BlocConsumer(
       bloc: Modular.get<ProfileBloc>(),
       listener: (context, state) {
@@ -58,6 +51,13 @@ class _ProfilePageState extends State<ProfilePage> {
             state is ProfileStateDefault ? state.model : ProfileModel();
         final firstName = model.firstName;
         final lastName = model.lastName;
+
+        // Determine if rootEventDateIsSet
+        final config_state = Modular.get<ConfigBloc>().state;
+        final config_model = config_state is ConfigStateDefault
+            ? config_state.model
+            : ConfigModel();
+        final _rootEventDateIsSet = config_model.rootEventDate.isNotEmpty;
 
         return BasePage(
           title: localizations.profileTitle,

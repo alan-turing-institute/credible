@@ -35,6 +35,12 @@ class _AnimatedMenuItemState extends State<AnimatedMenuItem>
   }
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Tooltip(
       message: widget.title,
