@@ -27,7 +27,7 @@ class _AnimatedMenuItemState extends State<AnimatedMenuItem>
     super.initState();
     controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 1),
     )
       ..forward()
       ..repeat(reverse: true);
@@ -67,7 +67,7 @@ class _AnimatedMenuItemState extends State<AnimatedMenuItem>
                 // ),
                 AnimatedIcon(
                     icon: widget.icon,
-                    size: 30,
+                    size: 24,
                     progress: Tween<double>(begin: 0.0, end: 1.0)
                         .animate(controller)),
                 const SizedBox(width: 16.0),

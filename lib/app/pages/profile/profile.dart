@@ -48,10 +48,12 @@ class _ProfilePageState extends State<ProfilePage> {
         },
         builder: (context, state) {
           // Determine if rootEventDateIsSet
+          // TODO: consider refactoring with:
+          // https://bloclibrary.dev/flutter-bloc-concepts/#contextwatch
           final config_state = Modular.get<ConfigBloc>().state;
           final config_model = config_state is ConfigStateDefault
               ? config_state.model
-              : ConfigModel();
+              : ConfigModel(rootEventDate: 'Default: is not empty.');
           final _rootEventDateIsSet = config_model.rootEventDate.isNotEmpty;
           return BlocConsumer(
             bloc: Modular.get<ProfileBloc>(),
