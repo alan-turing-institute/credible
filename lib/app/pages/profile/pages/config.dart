@@ -40,6 +40,7 @@ class _ConfigPageState extends State<ConfigPage> {
   late String didKey;
   bool didIonMethod = false;
   final ValueNotifier<bool> _rootEventDateIsSet = ValueNotifier<bool>(false);
+  bool _setRootEventDateButtonClicked = false;
 
   @override
   void initState() {
@@ -172,6 +173,9 @@ class _ConfigPageState extends State<ConfigPage> {
                           ),
                         )),
                     TextButton(
+                      onPressed: () {
+                        handleRootEventDateButton();
+                      },
                       child: Text(
                         _rootEventDateIsSet.value
                             ? localizations.changeRootEventDate
@@ -182,9 +186,6 @@ class _ConfigPageState extends State<ConfigPage> {
                                 ? Colors.grey
                                 : Colors.blue),
                       ),
-                      onPressed: () {
-                        handleRootEventDateButton();
-                      },
                     )
                   ],
                 );
@@ -296,80 +297,95 @@ class _ConfigPageState extends State<ConfigPage> {
   void publishDIDION() async {}
 
   void handleRootEventDateButton() async {
-    // If it is not already set, handle setting a new root event date.
-    if (!_rootEventDateIsSet.value) {
-      // If the selected date is not in the past, show an Error.
-      if (!rootConfigModel.date
-          .isBefore(DateTime.now().subtract(const Duration(days: 1)))) {
-        showOkDialog('Invalid date',
-            'The root event date must be in the past. Please try again.');
-        return;
-      }
-      // Get the root DID candidates via an HTTP request.
-      var rootCandidates;
-      try {
-        rootCandidates = await getRootCandidates(rootConfigModel.date);
-      } catch (e) {
-        showOkDialog('Server error',
-            'There was an error connecting to the Trustchain server.\n\nPlease try again later.');
-        return;
-      }
-
-      // Request the user to enter the confirmation code.
-      final confCode = await requestConfirmationCode();
-      if (confCode == null ||
-          confCode.length < Constants.confirmationCodeMinimumLength) return;
-
-      // Filter the root candidates w.r.t. the confirmation code.
-      final matchingCandidates = rootCandidates.matchingCandidates(confCode);
-
-      // If the confirmation code does not uniquely identify a root DID candidate, stop.
-      if (matchingCandidates.length != 1) {
-        showOkDialog('Invalid date/confirmation code',
-            'The combination of root event date and confirmation code entered is not valid.\n\nPlease check and try again.');
-        return;
-      }
-      var root = matchingCandidates.first;
-
-      // Now that we have the unique root, get the timestamp via an HTTP request.
-      var rootTimestamp;
-      try {
-        rootTimestamp = await getBlockTimestamp(root.blockHeight);
-      } catch (e) {
-        showOkDialog('Server error',
-            'There was an error connecting to the Trustchain server.\n\nPlease try again later.');
-        return;
-      }
-
-      // Confirm that the timestamp returned by the server falls within the correct date.
-      if (!validate_timestamp(rootTimestamp.timestamp, rootConfigModel.date)) {
-        final localizations = AppLocalizations.of(context)!;
-        showOkDialog(
-            'Invalid timestamp',
-            'The server returned an invalid timestamp.\n\nPlease check the "' +
-                localizations.trustchainEndpoint.replaceAll(':', '') +
-                '" setting and try again.');
-        return;
-      }
-
-      setState(() {
-        rootConfigModel.confimationCode = confCode;
-        rootConfigModel.root = root;
-        rootConfigModel.timestamp = rootTimestamp.timestamp;
-        print('State updated!');
-      });
-    } else {
-      // If it was already set, unset everything.
-      rootConfigModel.confimationCode = null;
-      rootConfigModel.root = null;
-      rootConfigModel.timestamp = null;
-      print('State updated!');
+    // Ignore multiple presses of the 'Set root event date' button.
+    if (_setRootEventDateButtonClicked) {
+      return;
     }
-
-    // Update the widget state.
     setState(() {
-      _rootEventDateIsSet.value = !_rootEventDateIsSet.value;
+      _setRootEventDateButtonClicked = true;
     });
+
+    try {
+      // If it is not already set, handle setting a new root event date.
+      if (!_rootEventDateIsSet.value) {
+        // If the selected date is not in the past, show an Error.
+        if (!rootConfigModel.date
+            .isBefore(DateTime.now().subtract(const Duration(days: 1)))) {
+          showOkDialog('Invalid date',
+              'The root event date must be in the past. Please try again.');
+          return;
+        }
+        // Get the root DID candidates via an HTTP request.
+        var rootCandidates;
+        try {
+          rootCandidates = await getRootCandidates(rootConfigModel.date);
+        } catch (e) {
+          showOkDialog('Server error',
+              'There was an error connecting to the Trustchain server.\n\nPlease try again later.');
+          return;
+        }
+
+        // Request the user to enter the confirmation code.
+        final confCode = await requestConfirmationCode();
+        if (confCode == null ||
+            confCode.length < Constants.confirmationCodeMinimumLength) return;
+
+        // Filter the root candidates w.r.t. the confirmation code.
+        final matchingCandidates = rootCandidates.matchingCandidates(confCode);
+
+        // If the confirmation code does not uniquely identify a root DID candidate, stop.
+        if (matchingCandidates.length != 1) {
+          showOkDialog('Invalid date/confirmation code',
+              'The combination of root event date and confirmation code entered is not valid.\n\nPlease check and try again.');
+          return;
+        }
+        var root = matchingCandidates.first;
+
+        // Now that we have the unique root, get the timestamp via an HTTP request.
+        var rootTimestamp;
+        try {
+          rootTimestamp = await getBlockTimestamp(root.blockHeight);
+        } catch (e) {
+          showOkDialog('Server error',
+              'There was an error connecting to the Trustchain server.\n\nPlease try again later.');
+          return;
+        }
+
+        // Confirm that the timestamp returned by the server falls within the correct date.
+        if (!validate_timestamp(
+            rootTimestamp.timestamp, rootConfigModel.date)) {
+          final localizations = AppLocalizations.of(context)!;
+          showOkDialog(
+              'Invalid timestamp',
+              'The server returned an invalid timestamp.\n\nPlease check the "' +
+                  localizations.trustchainEndpoint.replaceAll(':', '') +
+                  '" setting and try again.');
+          return;
+        }
+
+        setState(() {
+          rootConfigModel.confimationCode = confCode;
+          rootConfigModel.root = root;
+          rootConfigModel.timestamp = rootTimestamp.timestamp;
+          print('State updated!');
+        });
+      } else {
+        // If it was already set, unset everything.
+        rootConfigModel.confimationCode = null;
+        rootConfigModel.root = null;
+        rootConfigModel.timestamp = null;
+        print('State updated!');
+      }
+
+      // Update the widget state.
+      setState(() {
+        _rootEventDateIsSet.value = !_rootEventDateIsSet.value;
+      });
+    } finally {
+      setState(() {
+        _setRootEventDateButtonClicked = false;
+      });
+    }
   }
 
   Future<String?> requestConfirmationCode() => showDialog<String>(
