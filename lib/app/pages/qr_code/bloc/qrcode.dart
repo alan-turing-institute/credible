@@ -39,8 +39,9 @@ class QRCodeStateService extends QRCodeState {
   final Uri uri;
   final bool verified;
   final ServiceType type;
+  final String did;
 
-  QRCodeStateService(this.uri, this.verified, this.type);
+  QRCodeStateService(this.uri, this.verified, this.type, this.did);
 }
 
 class QRCodeStateSuccessTinyVP extends QRCodeState {
@@ -82,9 +83,16 @@ class QRCodeBloc extends Bloc<QRCodeEvent, QRCodeState> {
   ) async* {
     late final uri;
 
+    // TODO: Add proper localizations
+
     // Decode the JSON string
     try {
       final qrcodeJson = jsonDecode(event.data);
+      // // TODO: Handle a QR code mis-read (happens occasionally)
+      if (qrcodeJson is int) {
+        _log.warning('QR code JSON read as integer: $qrcodeJson. Ignored.');
+        return;
+      }
       // Handle the Trustchain-specific case of TinyVP.
       if (qrcodeJson.containsKey(Constants.tinyVP)) {
         yield handleTinyVp(qrcodeJson);
@@ -196,6 +204,6 @@ class QRCodeBloc extends Bloc<QRCodeEvent, QRCodeState> {
         : endpoint;
 
     return QRCodeStateService(
-        Uri.parse(uri), verified, ServiceType.values.byName(type));
+        Uri.parse(uri), verified, ServiceType.values.byName(type), did);
   }
 }

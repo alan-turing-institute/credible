@@ -9,6 +9,7 @@ import 'package:credible/app/pages/profile/module.dart';
 import 'package:credible/app/pages/qr_code/bloc/qrcode.dart';
 import 'package:credible/app/pages/qr_code/display.dart';
 import 'package:credible/app/pages/qr_code/scan.dart';
+import 'package:credible/app/pages/qr_code/web_url_viewer.dart';
 import 'package:credible/app/pages/splash.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -87,6 +88,14 @@ class AppModule extends Module {
         ChildRoute(
           '/qr-code/scan/presentation_viewer',
           child: (context, args) => PresentationViewer(presentation: args.data),
+          transition: TransitionType.fadeIn,
+        ),
+        ChildRoute(
+          '/qr-code/scan/web_url_viewer',
+          child: (context, args) => WebUrlViewer(
+              url: args.data['url'],
+              verificationState: args.data['verificationState'],
+              did: args.data['did']),
           transition: TransitionType.fadeIn,
         ),
         ChildRoute(

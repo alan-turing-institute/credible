@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:credible/app/pages/credentials/models/verification_state.dart';
 import 'package:credible/app/pages/qr_code/bloc/qrcode.dart';
 import 'package:credible/app/shared/widget/base/page.dart';
 import 'package:credible/app/shared/widget/confirm_dialog.dart';
@@ -28,7 +29,7 @@ class _QrCodeScanPageState extends ModularState<QrCodeScanPage, QRCodeBloc> {
   late bool flash;
   bool promptActive = false;
 
-  final _log = Logger('credible/scan_page');
+  // final _log = Logger('credible/scan_page');
 
   @override
   void initState() {
@@ -61,76 +62,28 @@ class _QrCodeScanPageState extends ModularState<QrCodeScanPage, QRCodeBloc> {
     });
   }
 
-  void handleService(Uri uri, bool verified, ServiceType type) async {
+  void handleService(
+      Uri uri, bool verified, ServiceType type, String did) async {
     switch (type) {
       case ServiceType.CredentialEndpoint:
         return promptHost(uri, verified);
       case ServiceType.WebUrl:
-        return promptWebUrl(uri, verified);
+        return promptWebUrl(uri, verified, did);
     }
   }
 
-  // Launch a uri in the in-app browser.
-  Future<bool> _launchURL(Uri uri) async {
-    // // Temp URL for testing/demo purposes:
-    // uri = Uri.parse('https://www.justpark.com/');
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-
-      // Wait until the browser closes
-      // (see https://github.com/flutter/flutter/issues/57536)
-      await Future.delayed(Duration(milliseconds: 100));
-      while (
-          WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) {
-        await Future.delayed(Duration(milliseconds: 100));
-      }
-      // await closeInAppWebView();
-      return true;
-    } else {
-      _log.severe('cannot launch url: $uri');
-      return false;
-    }
-  }
-
-  // Prompt the user with a dialog box containing the URI and the option
-  // to open the web page in a browser.
-  void promptWebUrl(Uri uri, bool verified) async {
-    if (!promptActive) {
-      setState(() {
-        promptActive = true;
-      });
-
-      final localizations = AppLocalizations.of(context)!;
-
-      if (!verified) {
-        await showDialog<bool>(
-            context: context,
-            builder: (BuildContext context) {
-              return InfoDialog(
-                title:
-                    'Unverified URL - AVOID!', // TODO. localizations.scanPromptUnverifiedUrl,
-                subtitle: uri.host,
-              );
-            });
-      } else {
-        final acceptUrl = await showDialog<bool>(
-                context: context,
-                builder: (BuildContext context) {
-                  return ConfirmDialog(
-                      title:
-                          'Verified URL ✓', // localizations.scanPromptVerifiedUrl // TODO make this a clickable link
-                      subtitle: uri.host,
-                      yes: 'Open',
-                      no: 'Cancel');
-                }) ??
-            false;
-
-        if (acceptUrl) {
-          await _launchURL(uri);
-        }
-        await Modular.to.pushReplacementNamed('/credentials/list');
-      }
-    }
+  // Prompt the user with a page containing the URI and the option
+  // to open the web page in a browser (if successfully verified).
+  void promptWebUrl(Uri uri, bool verified, String did) async {
+    final verificationState = verified
+        ? VerificationState.Verified
+        : VerificationState.VerifiedWithError;
+    await Modular.to.pushReplacementNamed('/qr-code/scan/web_url_viewer',
+        arguments: <String, dynamic>{
+          'url': uri,
+          'verificationState': verificationState,
+          'did': did
+        });
   }
 
   void promptHost(Uri uri, bool verified) async {
@@ -190,7 +143,7 @@ class _QrCodeScanPageState extends ModularState<QrCodeScanPage, QRCodeBloc> {
         }
         if (state is QRCodeStateService) {
           // qrController.pauseCamera();
-          handleService(state.uri, state.verified, state.type);
+          handleService(state.uri, state.verified, state.type, state.did);
           // qrController.resumeCamera();
           // Modular.to.pushReplacementNamed('/credentials/list');
         }
