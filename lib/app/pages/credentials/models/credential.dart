@@ -130,7 +130,8 @@ class CredentialModel {
     final bytes = canonicalJson.encode(vp);
     final gzipped = gzip.encode(bytes);
     final data = base64.encode(gzipped);
-    final map = {'type': Constants.tinyVP, 'data': data};
+    final map = {Constants.tinyVP: data};
+
     final jsonStr = jsonEncode(map);
     // print('-----------asTinyVP-----------');
     // log(jsonStr.toString());
