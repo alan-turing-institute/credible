@@ -37,7 +37,7 @@ class OnBoardingSuccessPage extends StatelessWidget {
           Flexible(flex: 3, child: Container()),
           BaseButton.primary(
             onPressed: () {
-              Modular.to.pushReplacementNamed('/credentials/list');
+              Modular.to.pushReplacementNamed('/profile');
             },
             child: Text(localizations.onBoardingSuccessButton),
           ),
