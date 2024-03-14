@@ -58,8 +58,6 @@ class _WebUrlViewerState extends ModularState<WebUrlViewer, WalletBloc> {
 
   // Launch a uri in the in-app browser.
   Future<bool> _launchURL(Uri uri) async {
-    // // Temp URL for testing/demo purposes:
-    uri = Uri.parse('https://www.justpark.com/');
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
 
@@ -141,7 +139,10 @@ class _WebUrlViewerState extends ModularState<WebUrlViewer, WalletBloc> {
         ),
         const SizedBox(height: 32.0),
         BaseButton.primary(
-          onPressed: () => _launchURL(widget.url),
+          // Temp URL for testing/demo purposes:
+          onPressed: () => _launchURL(Uri.parse('https://www.justpark.com/')),
+          // Replace with the following line when not running a demo:
+          // onPressed: () => _launchURL(widget.url),
           child: Tooltip(
             message: localizations.credentialDetailShowChainTooltip,
             child: Text(
