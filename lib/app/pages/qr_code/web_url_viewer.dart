@@ -1,9 +1,11 @@
 import 'package:credible/app/pages/credentials/blocs/wallet.dart';
 import 'package:credible/app/pages/credentials/models/verification_state.dart';
+import 'package:credible/app/shared/ui/trustchain/palette.dart';
 import 'package:credible/app/shared/ui/ui.dart';
 import 'package:credible/app/shared/widget/base/button.dart';
 import 'package:credible/app/shared/widget/base/page.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:logging/logging.dart';
@@ -57,7 +59,7 @@ class _WebUrlViewerState extends ModularState<WebUrlViewer, WalletBloc> {
   // Launch a uri in the in-app browser.
   Future<bool> _launchURL(Uri uri) async {
     // // Temp URL for testing/demo purposes:
-    // uri = Uri.parse('https://www.justpark.com/');
+    uri = Uri.parse('https://www.justpark.com/');
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
 
@@ -188,7 +190,6 @@ class _WebUrlViewerState extends ModularState<WebUrlViewer, WalletBloc> {
   Widget bodyUnverified(BuildContext context) {
     // TODO: Add proper localizations
     final localizations = AppLocalizations.of(context)!;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -234,32 +235,32 @@ class _WebUrlViewerState extends ModularState<WebUrlViewer, WalletBloc> {
                   'You are advised NOT to trust this link. It may be a QR code scam.'),
             ),
             const SizedBox(height: 16.0),
-            // // Temp additional message for testing/demo purposes:
-            // RichText(
-            //   text: TextSpan(
-            //     children: <TextSpan>[
-            //       const TextSpan(
-            //         text: 'Learn more about QR code scams in this ',
-            //         // TODO: fix the text style in these TextSpan widgets.
-            //         style: TextStyle(color: Colors.black87),
-            //       ),
-            //       TextSpan(
-            //         text: 'BBC video',
-            //         style: const TextStyle(
-            //           color: Colors.blue,
-            //           decoration: TextDecoration.underline,
-            //         ),
-            //         recognizer: TapGestureRecognizer()
-            //           ..onTap = () => _launchURL(Uri.parse(
-            //               'https://www.bbc.co.uk/programmes/articles/2ds8k78dDqJbrLz6SnbqBw0/qr-code-scams')),
-            //       ),
-            //       const TextSpan(
-            //         text: '.',
-            //         style: TextStyle(color: Colors.black87),
-            //       )
-            //     ],
-            //   ),
-            // ),
+            // Temp additional message for testing/demo purposes:
+            RichText(
+              text: TextSpan(
+                children: <TextSpan>[
+                  const TextSpan(
+                    text: 'Learn more about QR code scams in this ',
+                    // TODO: fix the text style in these TextSpan widgets.
+                    style: TextStyle(color: TrustchainPalette.text),
+                  ),
+                  TextSpan(
+                    text: 'BBC video',
+                    style: const TextStyle(
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () => _launchURL(Uri.parse(
+                          'https://www.bbc.co.uk/programmes/articles/2ds8k78dDqJbrLz6SnbqBw0/qr-code-scams')),
+                  ),
+                  const TextSpan(
+                    text: '.',
+                    style: TextStyle(color: TrustchainPalette.text),
+                  )
+                ],
+              ),
+            ),
           ],
         ),
       ],
