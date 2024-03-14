@@ -84,7 +84,7 @@ class ChainItemWidget extends StatelessWidget {
                       .apply(color: UiKit.palette.credentialText),
                   maxLines: null,
                   softWrap: true,
-                  textScaleFactor: 1.7,
+                  textScaleFactor: 1.4,
                 )
               ],
             ),
