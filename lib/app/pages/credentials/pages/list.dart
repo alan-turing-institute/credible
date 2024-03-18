@@ -20,30 +20,27 @@ class CredentialsList extends StatelessWidget {
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
 
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: BlocListener(
-        bloc: Modular.get<ScanBloc>(),
-        listener: (context, state) {
-          if (state is ScanStateMessage) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              backgroundColor: state.message.color,
-              content: Text(state.message.message),
-            ));
-          }
-        },
-        child: BasePage(
-          title: localizations.credentialListTitle,
-          padding: const EdgeInsets.symmetric(
-            vertical: 24.0,
-            horizontal: 16.0,
-          ),
-          navigation: CustomNavBar(index: 0),
-          body: Column(
-            children: List.generate(
-              items.length,
-              (index) => CredentialsListItem(item: items[index]),
-            ),
+    return BlocListener(
+      bloc: Modular.get<ScanBloc>(),
+      listener: (context, state) {
+        if (state is ScanStateMessage) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: state.message.color,
+            content: Text(state.message.message),
+          ));
+        }
+      },
+      child: BasePage(
+        title: localizations.credentialListTitle,
+        padding: const EdgeInsets.symmetric(
+          vertical: 24.0,
+          horizontal: 16.0,
+        ),
+        navigation: CustomNavBar(index: 0),
+        body: Column(
+          children: List.generate(
+            items.length,
+            (index) => CredentialsListItem(item: items[index]),
           ),
         ),
       ),
