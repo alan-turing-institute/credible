@@ -130,66 +130,61 @@ class _QrCodeScanPageState extends ModularState<QrCodeScanPage, QRCodeBloc> {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: BlocListener(
-        bloc: store,
-        listener: (context, state) {
-          if (state is QRCodeStateMessage) {
-            qrController.resumeCamera();
+    return BlocListener(
+      bloc: store,
+      listener: (context, state) {
+        if (state is QRCodeStateMessage) {
+          qrController.resumeCamera();
 
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              backgroundColor: state.message.color,
-              content: Text(state.message.message),
-            ));
-          }
-          if (state is QRCodeStateService) {
-            // qrController.pauseCamera();
-            handleService(state.uri, state.verified, state.type, state.did);
-            // qrController.resumeCamera();
-            // Modular.to.pushReplacementNamed('/credentials/list');
-          }
-          if (state is QRCodeStateUnknown) {
-            qrController.resumeCamera();
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(localizations.scanUnsupportedMessage),
-            ));
-          }
-          if (state is QRCodeStateSuccess) {
-            qrController.stopCamera();
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: state.message.color,
+            content: Text(state.message.message),
+          ));
+        }
+        if (state is QRCodeStateService) {
+          handleService(state.uri, state.verified, state.type, state.did);
+        }
+        if (state is QRCodeStateUnknown) {
+          qrController.resumeCamera();
 
-            Modular.to.pushReplacementNamed(
-              state.route,
-              arguments: state.uri,
-            );
-          }
-          if (state is QRCodeStateSuccessTinyVP) {
-            qrController.stopCamera();
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(localizations.scanUnsupportedMessage),
+          ));
+        }
+        if (state is QRCodeStateSuccess) {
+          qrController.stopCamera();
 
-            Modular.to.pushReplacementNamed(
-              '/qr-code/scan/presentation_viewer',
-              arguments: state.presentation,
-            );
-          }
-        },
-        child: BasePage(
-          padding: EdgeInsets.zero,
-          title: localizations.scanTitle,
-          scrollView: false,
-          navigation: CustomNavBar(index: 1),
-          extendBelow: true,
-          body: SafeArea(
-            child: Container(
-              padding: const EdgeInsets.all(8.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16.0),
-                child: QRView(
-                  key: qrKey,
-                  overlay: QrScannerOverlayShape(
-                    borderColor: Colors.white70,
-                  ),
-                  onQRViewCreated: onQRViewCreated,
+          Modular.to.pushReplacementNamed(
+            state.route,
+            arguments: state.uri,
+          );
+        }
+        if (state is QRCodeStateSuccessTinyVP) {
+          qrController.stopCamera();
+
+          Modular.to.pushReplacementNamed(
+            '/qr-code/scan/presentation_viewer',
+            arguments: state.presentation,
+          );
+        }
+      },
+      child: BasePage(
+        padding: EdgeInsets.zero,
+        title: localizations.scanTitle,
+        scrollView: false,
+        navigation: CustomNavBar(index: 1),
+        extendBelow: true,
+        body: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.all(8.0),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16.0),
+              child: QRView(
+                key: qrKey,
+                overlay: QrScannerOverlayShape(
+                  borderColor: Colors.white70,
                 ),
+                onQRViewCreated: onQRViewCreated,
               ),
             ),
           ),
