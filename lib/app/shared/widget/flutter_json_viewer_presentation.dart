@@ -56,7 +56,12 @@ class JsonObjectViewerState extends State<JsonObjectViewer> {
   @override
   void initState() {
     super.initState();
-    final expand_keys = ['verifiableCredential', 'credentialSubject'];
+    final expand_keys = [
+      'verifiableCredential',
+      'credentialSubject',
+      'Iso18013DriversLicense',
+      'degree'
+    ];
     for (final k in expand_keys) {
       if (widget.jsonObj.containsKey(k)) {
         openFlag[k] = true;
