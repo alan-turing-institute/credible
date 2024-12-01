@@ -1,14 +1,20 @@
+import 'dart:convert';
 import 'dart:math';
 
+import 'package:credible/app/interop/didkit/didkit.dart';
 import 'package:credible/app/interop/secure_storage/secure_storage.dart';
+import 'package:credible/app/interop/trustchain/trustchain.dart';
+import 'package:credible/app/pages/profile/models/config.dart';
+import 'package:credible/app/shared/key_generation.dart';
 import 'package:credible/app/shared/widget/back_leading_button.dart';
 import 'package:credible/app/shared/widget/base/button.dart';
 import 'package:credible/app/shared/widget/base/page.dart';
 import 'package:credible/app/shared/widget/base/text_field.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:credible/app/shared/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:logging/logging.dart';
 
 class OnBoardingGencVerifyPage extends StatefulWidget {
   @override
@@ -20,6 +26,7 @@ class _OnBoardingGencVerifyPageState extends State<OnBoardingGencVerifyPage> {
   int _random = 0;
   bool _valid = false;
   List<String> _mnemonic = [];
+  bool _isWaiting = false;
 
   late TextEditingController _mnemonicFirstController;
   late bool _mnemonicFirstEdited;
@@ -131,6 +138,47 @@ class _OnBoardingGencVerifyPageState extends State<OnBoardingGencVerifyPage> {
     return _ordinal(_random + 1);
   }
 
+  Future<void> generateKey(BuildContext context) async {
+    final log = Logger('credible/on-boarding/key-generation');
+
+    final localizations = AppLocalizations.of(context)!;
+    try {
+      final mnemonic = (await SecureStorageProvider.instance.get('mnemonic'))!;
+      final key = await KeyGeneration.privateKey(mnemonic);
+      final didKey =
+          DIDKitProvider.instance.keyToDID(Constants.defaultDIDMethod, key);
+      final didIon = jsonDecode(await trustchain_ffi.createOperationMnemonic(
+              mnemonic: mnemonic))['did']
+          .toString();
+      await SecureStorageProvider.instance.set('key', key);
+      await SecureStorageProvider.instance
+          .set(ConfigModel.didIonMethodKey, 'false');
+      await SecureStorageProvider.instance.set(ConfigModel.didKeyKey, didKey);
+      await SecureStorageProvider.instance.set(ConfigModel.didIonKey, didIon);
+      await SecureStorageProvider.instance.set(ConfigModel.rootEventTimeKey,
+          const String.fromEnvironment('rootEventTime', defaultValue: ''));
+      await SecureStorageProvider.instance.set(
+          ConfigModel.trustchainEndpointKey,
+          const String.fromEnvironment('trustchainEndpoint', defaultValue: ''));
+      await Modular.to.pushReplacementNamed('/on-boarding/success');
+    } catch (error) {
+      log.severe('something went wrong when generating a key', error);
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.red,
+        content: Text(localizations.errorGeneratingKey),
+      ));
+
+      await Modular.to.pushReplacementNamed('/on-boarding/key');
+    }
+  }
+
+  void _onSubmit() async {
+    setState(() => _isWaiting = true);
+    await generateKey(context);
+    setState(() => _isWaiting = false);
+  }
+
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
@@ -173,12 +221,10 @@ class _OnBoardingGencVerifyPageState extends State<OnBoardingGencVerifyPage> {
           ),
           const SizedBox(height: 32.0),
           BaseButton.primary(
-            onPressed: _valid
-                ? () async {
-                    await Modular.to.pushReplacementNamed('/on-boarding/gen');
-                  }
-                : null,
-            child: Text(localizations.onBoardingGenVerifyButton),
+            onPressed: _valid ? _onSubmit : null,
+            child: _isWaiting
+                ? Text('Please wait...') // TODO: add to localizations.
+                : Text(localizations.onBoardingGenVerifyButton),
           ),
         ],
       ),
