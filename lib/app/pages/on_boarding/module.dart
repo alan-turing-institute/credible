@@ -1,4 +1,3 @@
-import 'package:credible/app/pages/on_boarding/gen.dart';
 import 'package:credible/app/pages/on_boarding/gen_phrase.dart';
 import 'package:credible/app/pages/on_boarding/gen_verify.dart';
 import 'package:credible/app/pages/on_boarding/key.dart';
