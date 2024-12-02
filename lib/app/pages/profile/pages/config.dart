@@ -15,6 +15,7 @@ import 'package:credible/app/shared/ui/ui.dart';
 import 'package:credible/app/shared/widget/back_leading_button.dart';
 import 'package:credible/app/shared/widget/base/page.dart';
 import 'package:credible/app/shared/widget/base/text_field.dart';
+import 'package:credible/app/shared/widget/cancel_back_leading_button.dart';
 import 'package:credible/app/shared/widget/confirm_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -79,7 +80,7 @@ class _ConfigPageState extends State<ConfigPage> {
     final localizations = AppLocalizations.of(context)!;
     return BasePage(
       title: localizations.configTitle,
-      titleLeading: BackLeadingButton(),
+      titleLeading: CancelBackLeadingButton(),
       titleTrailing: InkWell(
         borderRadius: BorderRadius.circular(8.0),
         onTap: () {
@@ -111,12 +112,9 @@ class _ConfigPageState extends State<ConfigPage> {
             horizontal: 12.0,
             vertical: 8.0,
           ),
-          child: Text(
-            localizations.personalSave,
-            style: Theme.of(context)
-                .textTheme
-                .bodyText1!
-                .apply(color: UiKit.palette.primary),
+          child: Icon(
+            Icons.check,
+            color: UiKit.palette.icon,
           ),
         ),
       ),
