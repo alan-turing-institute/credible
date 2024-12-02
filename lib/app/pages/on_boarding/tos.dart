@@ -20,9 +20,9 @@ class OnBoardingTosPage extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          const SizedBox(height: 8.0),
+          const SizedBox(height: 32.0),
           AppVersion(),
-          const SizedBox(height: 8.0),
+          const SizedBox(height: 16.0),
           Expanded(
             child: Scrollbar(
               isAlwaysShown: true,
@@ -33,10 +33,18 @@ class OnBoardingTosPage extends StatelessWidget {
                   vertical: 16.0,
                 ),
                 controller: scrollController,
-                child: SelectableText(
-                  '',
-                  style: Theme.of(context).textTheme.bodyText2,
+                child: Center(
+                  child: Text(
+                    // TODO: add to localizations.
+                    "This software is provided 'as is', without any express or implied warranty. In no event shall the authors or copyright holders be liable for any claim, damages or other liability arising from or out of or in connection with the software or its use.",
+                    style: Theme.of(context).textTheme.bodyLarge,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
+                // child: SelectableText(
+                //   '',
+                //   style: Theme.of(context).textTheme.bodyText2,
+                // ),
               ),
             ),
           ),

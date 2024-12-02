@@ -1,4 +1,3 @@
-import 'package:credible/app/pages/on_boarding/gen.dart';
 import 'package:credible/app/pages/on_boarding/gen_phrase.dart';
 import 'package:credible/app/pages/on_boarding/gen_verify.dart';
 import 'package:credible/app/pages/on_boarding/key.dart';
@@ -42,11 +41,6 @@ class OnBoardingModule extends Module {
         ChildRoute(
           '/gen-verify',
           child: (context, args) => OnBoardingGencVerifyPage(),
-          transition: TransitionType.rightToLeftWithFade,
-        ),
-        ChildRoute(
-          '/gen',
-          child: (context, args) => OnBoardingGenPage(),
           transition: TransitionType.rightToLeftWithFade,
         ),
         ChildRoute(
